@@ -24,12 +24,16 @@ class CryptBuffer
   end
   alias_method :s, :str
   def bits
-    bytes.map{|b| b.to_s(2) }
+    bytes.map{|b| "%08d" % b.to_s(2) }
   end
   def xor(input)
     xor_bytes(bytes_from_any(input))
   end
 
+  def xor_all_with(byte)
+    result = self.bytes.map{|b| b ^ byte }
+    CryptBuffer.new(result)
+  end
   def pp
     puts pretty_hexstr
   end
@@ -38,15 +42,34 @@ class CryptBuffer
     self.xor("0x20")
   end
 
+  def ==(other)
+    self.bytes == bytes_from_any(other)
+  end
+
+  def to_s
+    str
+  end
 private
   def bytes_from_any(input)
     case input
       when Array
         input
       when String
-        hex2bytes(normalize_hex(input))
+        if input.match(/^(0x)?[0-9a-fA-F]+$/).nil?
+          str2bytes(input)
+        else
+          hex2bytes(normalize_hex(input))
+        end
       when CryptBuffer
         input.b
+      when Fixnum
+        if input.to_s(16).match(/^(0x)?[0-9a-fA-F]+$/).nil?
+          # assume 0x prefixed integer
+          hex2bytes(normalize_hex(input.to_s(16)))          
+        else
+          # regular number
+          [input].pack('C*').bytes
+        end
       else
         raise "Unsupported input: #{input.inspect} of class #{input.class}"
     end
@@ -68,6 +91,9 @@ private
   end
   def hex2bytes(hexstr)
     hexstr.scan(/../).map{|h| h.to_i(16) }
+  end
+  def str2bytes(str)
+    str.bytes.to_a
   end
   def bytes2hex(bytes)
     bytes.map{|b| b.to_s(16)}.map{|hs| hs.length == 1 ? "0#{hs}" : hs  }.join
