@@ -1,8 +1,11 @@
+<<<<<<< HEAD
 .hg/
 .hgignore
 .*~
 .RData
 .Rhistory
+=======
+>>>>>>> 050ed2d3de6f4b9ced3e5a42d4d1c8041d0804b5
 *.gem
 *.rbc
 /.config
