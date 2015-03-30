@@ -9,7 +9,7 @@ require 'ffi/hunspell'
 
 def find_pattern(buf)
   bitstring = buf.bits.map{|b| b[0]}.join("")
-  1.upto(16).map do |ksize|
+  1.upto([buf.bytes.length,62].min).map do |ksize|
     parts = bitstring.scan(/.{#{ksize}}/)
     if parts.uniq.length == 1
       parts.first
@@ -73,46 +73,14 @@ puts "======= Candidate decryption result of first #{keylen} bytes ======="
 end
 puts "====================================================================="
 
-times = buf.bytes.length / keylen
-dict = FFI::Hunspell.dict('en_GB')
 
-combinations.each_with_index do |key,i| #  i is used as a simple counter only !
-  test = CryptBuffer.new(buf.bytes[0,keylen]).xor(key).str
-  repkey = (key*times) + key[0,(buf.bytes.length % times).to_i]
-    str    = buf.xor(repkey).to_s
-    words  = str.split(" ").length
-    errors = str.split(" ").map{|e| dict.check?(e) }.count{|e| e == false}
-    # using shell instead of hunspell ffi causes lots of escaping errors, even with shellwords.escape
-    #errors = Float(`echo '#{Shellwords.escape(str)}' |hunspell -l |wc -l `.split.first)
-
-    error_rate = errors.to_f/words
-    $stderr.puts error_rate.round(4)
-
-
-=begin
-missing punctuation support may lead to > 2% errors on valid texts, thus we use a high value .
-invalid decryptions tend to have spell error rates > 70
-Some statistics about it:
-> summary(invalids)
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 0.6000  1.0000  1.0000  0.9878  1.0000  1.0000 
-> summary(cut(invalids,10))
- (0.6,0.64] (0.64,0.68] (0.68,0.72] (0.72,0.76]  (0.76,0.8]  (0.8,0.84] 
-          8          13           9         534        1319        2809 
-(0.84,0.88] (0.88,0.92] (0.92,0.96]    (0.96,1] 
-      10581       46598      198477     1440651 
-=end
-    if error_rate > 0.5
-      
-
-      if (i % 50000).zero?
-        #puts "skipping #{str} (spell error_rate: #{error_rate})"
-        puts "[Progress] #{i}/#{combinations.length} (#{(i.to_f/combinations.length*100).round(4)}%)"
-      end
-    else
-      puts "[Success] Found valid result (spell error_rate: #{error_rate*100}% is below threshold: 20%)"
-      puts "#{str}"
-    end
+load "key_filter.rb"
+result = KeySearch::Filter::AsciiPlain.new(combinations,buf).filter
+unless result.empty?
+  puts "[Success] Found valid result(s)"
+  result.each do |r|
+    puts r.xor(buf).str
+  end
 end
 
 =begin
