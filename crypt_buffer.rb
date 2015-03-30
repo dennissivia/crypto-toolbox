@@ -39,7 +39,7 @@ class CryptBuffer
   end
 
   def xor_space
-    self.xor("0x20")
+    self.xor_all_with(0x20)
   end
 
   def ==(other)
