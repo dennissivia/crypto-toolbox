@@ -17,8 +17,16 @@ Some statistics about it:
           8          13           9         534        1319        2809 
 (0.84,0.88] (0.88,0.92] (0.92,0.96]    (0.96,1] 
       10581       46598      198477     1440651 
-=end  
-  def check(str)
+=end
+  def known_words(str)
+    words = str.split(" ").select{|w| @dict.check?(w) }
+  end
+
+  def suggest(str)
+    @dict.suggest(str)
+  end
+                                                        
+  def human_language?(str)
     words  = str.split(" ").length
     errors = str.split(" ").map{|e| @dict.check?(e) }.count{|e| e == false}
     # using shell instead of hunspell ffi causes lots of escaping errors, even with shellwords.escape
