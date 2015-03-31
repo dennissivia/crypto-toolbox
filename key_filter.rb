@@ -24,7 +24,7 @@ module KeySearch
           repkey = CryptBuffer.new((key*reps) + key[0,(@c.bytes.length % reps).to_i])
           str    = @c.xor(repkey).to_s
 
-          if spell_checker.check(str)
+          if spell_checker.human_language?(str)
             result << repkey
             break
           else
