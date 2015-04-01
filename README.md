@@ -20,8 +20,14 @@ CryptBuffer(0xFFeecc)
 CryptBuffer("my example String")
 => #<CryptBuffer:0x00000000f353b8 @bytes=[109, 121, 32, 101, 120, 97, 109, 112, 108, 101, 32, 83, 116, 114, 105, 110, 103]>
 
+
+
+# Numers are treated as bytes but: numbers with a leading 0x are treated has hex bytes
+
 CryptBuffer(64)
-=> #<CryptBuffer:0x000000010d60f0 @bytes=[64]>
+=> #<CryptBuffer:0x00000000644d08 @bytes=[64]> 
+CryptBuffer(0x64)
+=> #<CryptBuffer:0x00000000619ae0 @bytes=[100]> 
 ```
 
 #### Simple Xoring

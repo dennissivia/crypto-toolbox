@@ -76,7 +76,7 @@ private
       when CryptBuffer
         input.b
       when Fixnum
-        if input.to_s(16).match(/^(0x)?[0-9a-fA-F]+$/).nil?
+        if input.to_s(16).match(/^0x[0-9a-fA-F]+$/)
           # assume 0x prefixed integer
           hex2bytes(normalize_hex(input.to_s(16)))
         else
