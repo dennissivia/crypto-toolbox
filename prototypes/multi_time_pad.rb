@@ -1,6 +1,7 @@
-load 'crypt_buffer.rb'
-load 'spell_checker.rb'
+require_relative './../crypt_buffer.rb'
+require_relative './../spell_checker.rb'
 require 'pp'
+
 class CryptoAnalyzer
   class OneTimePad
   end
@@ -31,7 +32,8 @@ matches = []
 (0..keylen-1).each do |pos|
   tmp=[]
   (1..255).each do |guess|
-    if cipher_texts.map{|c| CryptBuffer.new(CryptBuffer.new(c).bytes[pos]).xor(guess).bytes.first }.all?{|byte| byte > 32 && byte < 123 && ! ascii_blacklist.include?(byte) }
+    if cipher_texts.map{|c| CryptBuffer.new(CryptBuffer.new(c).bytes[pos]).xor(guess).bytes.first }.
+       all?{|byte| puts byte.inspect ; byte > 32 && byte < 123 && ! ascii_blacklist.include?(byte) }
       #puts cipher_texts.map{|c| CryptBuffer.new(CryptBuffer.new(c).bytes[pos]).xor(guess).str }.inspect
       tmp << guess
     end
