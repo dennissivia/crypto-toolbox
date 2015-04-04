@@ -30,13 +30,33 @@ CryptBuffer(0x64)
 => #<CryptBuffer:0x00000000619ae0 @bytes=[100]> 
 ```
 
-#### Simple Xoring
+#### XORing
 
+Xoring two CryptBuffers
 ```ruby
 key = CryptBuffer("my-super-secret-key")
 str = CryptBuffer("my-public-message!!")
 cipher = key.xor(str)
 ```
+
+Xor any compatible input for a Cryptbuffer:
+```ruby
+key="my-super-secret-key"
+msg="my-public-message!!"
+CryptBuffer(key).xor(msg).xor(CryptBuffer(key)).str
+ => "my-public-message!!" 
+
+CryptBuffer(" ").xor("u").str
+=> "U"
+
+CryptBuffer("u").xor(1).str
+=> "t"
+
+CryptBuffer(0x90).xor(1).xor("0xff").str
+ => "n" 
+```
+
+
 
 #### Method Chaining
 ```ruby

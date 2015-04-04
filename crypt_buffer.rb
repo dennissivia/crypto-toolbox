@@ -41,7 +41,8 @@ class CryptBuffer
     xor_bytes(bytes_from_any(input))
   end
 
-  def xor_all_with(byte)
+  def xor_all_with(input)
+    byte = bytes_from_any(input).first
     result = map{|b| b ^ byte }
     CryptBuffer.new(result)
   end
