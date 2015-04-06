@@ -1,5 +1,5 @@
-load 'crypt_buffer.rb'
-load 'spell_checker.rb'
+require_relative './crypt_buffer.rb'
+require_relative './spell_checker.rb'
 require 'pry'
 
 module KeySearch

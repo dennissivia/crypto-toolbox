@@ -1,5 +1,6 @@
 # coding: utf-8
-load 'crypt_buffer.rb'
+require_relative './crypt_buffer.rb'
+require_relative './key_filter.rb'
 require 'shellwords'
 require 'ffi/hunspell'
 
@@ -74,7 +75,6 @@ end
 puts "====================================================================="
 
 
-load "key_filter.rb"
 result = KeySearch::Filter::AsciiPlain.new(combinations,buf).filter
 unless result.empty?
   puts "[Success] Found valid result(s)"

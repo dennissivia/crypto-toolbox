@@ -81,6 +81,12 @@ buf.bytes
 buf.hex
 => "fecc99"
 
+CryptBuffer(1).bits
+=> ["00000001"]
+
+CryptBuffer("AABB")
+=> ["10101010", "10111011"]
+
 ```
 
 Shortcut methods are: 

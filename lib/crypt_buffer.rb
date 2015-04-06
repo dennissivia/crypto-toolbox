@@ -19,7 +19,7 @@ class CryptBuffer
   alias_method :b, :bytes
 
   def hex
-    bytes2hex(bytes)
+    bytes2hex(bytes).upcase
   end
   alias_method :h, :hex
   
@@ -37,14 +37,17 @@ class CryptBuffer
     map{|b| "%08d" % b.to_s(2) }
   end
 
-  def xor(input)
-    xor_bytes(bytes_from_any(input))
+  def xor(input,expand_input: false)
+    if expand_input
+      xor_all_with(input)
+    else
+      xor_bytes(bytes_from_any(input))
+    end
   end
 
   def xor_all_with(input)
-    byte = bytes_from_any(input).first
-    result = map{|b| b ^ byte }
-    CryptBuffer.new(result)
+    expanded = expand_bytes(bytes_from_any(input),self.bytes.length)
+    xor_bytes(expanded)
   end
 
   def pp
@@ -52,7 +55,7 @@ class CryptBuffer
   end
 
   def xor_space
-    xor_all_with(0x20)
+    xor(0x20,expand_input: true)
   end
 
   def ==(other)
@@ -63,7 +66,18 @@ class CryptBuffer
     str
   end
 
-private
+  private
+  def expand_bytes(input,total)
+    if input.length >= total
+      input
+    else
+      n = total / input.length
+      rest = total % input.length
+
+      # expand the input to the full length of the internal data
+      (input * n) + input[0,rest]
+    end
+  end
   def bytes_from_any(input)
     case input
       when Array
@@ -77,7 +91,8 @@ private
       when CryptBuffer
         input.b
       when Fixnum
-        if input.to_s(16).match(/^0x[0-9a-fA-F]+$/)
+        # integers as strings dont have a 0x prefix
+        if input.to_s(16).match(/^[0-9a-fA-F]+$/)
           # assume 0x prefixed integer
           hex2bytes(normalize_hex(input.to_s(16)))
         else
@@ -90,7 +105,8 @@ private
   end
 
   def normalize_hex(str)
-    str.gsub(/(^0x|\s)/,"").upcase
+    tmp = (str.length == 1) ? "0#{str}" : "#{str}"
+    tmp.gsub(/(^0x|\s)/,"").upcase
   end
 
   def strip_hex_prefix(hex)
@@ -99,7 +115,7 @@ private
 
   def xor_bytes(byt)
     len = [self.bytes.size,byt.size].min
-    result = self.bytes[0...len].map.with_index{|b,i| b ^ byt[i] }
+    result = self.bytes[0...len].map.with_index{|b,i| b ^ byt[i] } + self.bytes[len,self.bytes.length - len]
     CryptBuffer.new(result)
   end
 
