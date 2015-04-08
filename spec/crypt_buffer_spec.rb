@@ -1,4 +1,4 @@
-require_relative './../lib/crypt_buffer.rb'
+require 'spec_helper'
 
 describe CryptBuffer do
   let(:short){ CryptBuffer(1)    } 
