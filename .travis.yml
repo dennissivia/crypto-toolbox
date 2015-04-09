@@ -1,3 +1,5 @@
+before_install:
+  - sudo apt-get install -y libhunspell-1.2
 language: ruby
 rvm:
   - 2.2.0
