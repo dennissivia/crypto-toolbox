@@ -1,6 +1,9 @@
 require 'rspec'
 require 'crypto-toolbox'
 
+require 'coveralls'
+Coveralls.wear!
+
 RSpec.configure do |config|
   config.failure_color = :magenta
   config.tty = true
