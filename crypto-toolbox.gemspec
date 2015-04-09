@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'crypto-toolbox'
-  s.version     = '0.0.1'
+  s.version     = '0.0.2'
   s.date        = '2015-04-07'
   s.summary     = "Toolbox for crypto analysis"
   s.description = "The Crypto Toolbox offers some tools to easily work with cryptographic primitives like arrays of Bytes or hextrings"

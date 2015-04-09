@@ -1,6 +1,9 @@
 # crypto-toolbox
 Small toolbox for simple Crypto analysis and learning applied cryptography techniques.
 
+
+[![Build Status](https://travis-ci.org/scepticulous/crypto-toolbox.svg?branch=master)](https://travis-ci.org/scepticulous/crypto-toolbox)
+
 ## CryptBuffer
 The CryptBuffer is made to make Xor operations on strings, bytes, hex-strings easy.
 
@@ -8,22 +11,25 @@ The CryptBuffer is made to make Xor operations on strings, bytes, hex-strings ea
 #### Input Type conversion
 
 ```ruby
+# Strings beginning with 0x are handles has hex strings
 CryptBuffer("0xFFeecc")
 => #<CryptBuffer:0x000000010d8e18 @bytes=[255, 238, 204]>
 
-CryptBuffer("FFeecc")
-=> #<CryptBuffer:0x000000010d8e18 @bytes=[255, 238, 204]>
-
+# Hex Integers are supported
 CryptBuffer(0xFFeecc)
 => #<CryptBuffer:0x000000010d8e18 @bytes=[255, 238, 204]>
 
+# regular strings are supported
 CryptBuffer("my example String")
 => #<CryptBuffer:0x00000000f353b8 @bytes=[109, 121, 32, 101, 120, 97, 109, 112, 108, 101, 32, 83, 116, 114, 105, 110, 103]>
 
+# Strings without leading 0x are handled as strings to avoid ambiguities
+CryptBuffer("FFeecc")
+=> #<CryptBuffer:0x0000000091ea60 @bytes=[70, 70, 101, 101, 99, 99]>
+# AND not 255, 238, 204
 
 
 # Numers are treated as bytes but: numbers with a leading 0x are treated has hex bytes
-
 CryptBuffer(64)
 => #<CryptBuffer:0x00000000644d08 @bytes=[64]> 
 CryptBuffer(0x64)
@@ -66,7 +72,19 @@ CryptBuffer("secret-key").xor("my message").xor_all_with(0x20).xor("secret-key")
 ####
 Enumerable
 
+#### add(n,mod)
+add allows to add a certain value to every byte in the buffer:
 
+```ruby
+CryptBuffer("0xFeFeFe").add(1).hex == "FFFFFF"
+=> true
+```
+
+It also allows to a custom modulus for the addition
+```ruby
+CryptBuffer("0x0f").add(15,mod:20).bytes  == 10
+=> true
+```
 #### Output conversion
 
 ```ruby

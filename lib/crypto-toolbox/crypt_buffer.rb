@@ -37,6 +37,26 @@ class CryptBuffer
     map{|b| "%08d" % b.to_s(2) }
   end
 
+  def modulus(mod)
+    real_mod = sanitize_modulus(mod)
+    CryptBuffer( bytes.map{|b| b % real_mod } )
+  end
+
+
+  def mod_sub(n,mod: 256)
+  end
+  def sub(n)
+    
+  end
+  def add(n, mod: 256, offset: 0)
+    real_mod = [256,mod].min
+
+    tmp = bytes.map do |b|
+      val = (b + n) % real_mod
+      val > offset ? val : val+offset
+    end
+    CryptBuffer(tmp)
+  end
   def xor(input,expand_input: false)
     if expand_input
       xor_all_with(input)
@@ -67,6 +87,9 @@ class CryptBuffer
   end
 
   private
+  def sanitize_modulus(mod)
+    (mod > 0) ? mod : 256
+  end
   def expand_bytes(input,total)
     if input.length >= total
       input
@@ -83,7 +106,7 @@ class CryptBuffer
       when Array
         input
       when String
-        if input.match(/^(0x)?[0-9a-fA-F]+$/).nil?
+        if input.match(/^0x[0-9a-fA-F]+$/).nil?
           str2bytes(input)
         else
           hex2bytes(normalize_hex(input))
@@ -112,6 +135,7 @@ class CryptBuffer
   def strip_hex_prefix(hex)
     raise "remove 0x from hexinput"
   end
+
 
   def xor_bytes(byt)
     len = [self.bytes.size,byt.size].min
