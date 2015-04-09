@@ -4,6 +4,7 @@ Small toolbox for simple Crypto analysis and learning applied cryptography techn
 
 [![Build Status](https://travis-ci.org/scepticulous/crypto-toolbox.svg?branch=master)](https://travis-ci.org/scepticulous/crypto-toolbox)
 [![Code Climate](https://codeclimate.com/github/scepticulous/crypto-toolbox/badges/gpa.svg)](https://codeclimate.com/github/scepticulous/crypto-toolbox)
+[![Coverage Status](https://coveralls.io/repos/scepticulous/crypto-toolbox/badge.svg?branch=master)](https://coveralls.io/r/scepticulous/crypto-toolbox?branch=master)
 ## CryptBuffer
 The CryptBuffer is made to make Xor operations on strings, bytes, hex-strings easy.
 
