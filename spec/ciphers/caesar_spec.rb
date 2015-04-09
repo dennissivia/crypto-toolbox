@@ -11,6 +11,10 @@ RSpec.describe Ciphers::Caesar do
     it "wraps from Z to A" do
       expect(subject.encode("ZZZZ","B")).to eq("AAAA")
     end
+    it "preseves spaces" do
+      skip "implement whitespace exception"
+      expect(subject.encode("    ","B")).to eq("    ")
+    end
   end
 
   context "#decode" do
@@ -23,7 +27,21 @@ RSpec.describe Ciphers::Caesar do
     it "wraps from Z to A" do
       expect(subject.decode("AAAA","B")).to eq("ZZZZ")
     end
+    it "preserves spaces" do
+      skip "implement whitespace exception"
+      expect(subject.decode("    ","B")).to eq("    ")
+    end
+
   end
+  context "real life examples" do
+    let(:cipher){"WKH TXLFN EURZQ IRA MXPSV RYHU WKH ODCB GRJ"}
+    let(:plain) {"THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG"}
+    it "encodes correctly" do
+      skip "implement whitespace exception"
+      expect(subject.encode(plain,"D")).to eq(cipher)
+    end
+  end
+
 
   context "formal correctness (invertability)" do
     ("A".."Z").each do |char|
