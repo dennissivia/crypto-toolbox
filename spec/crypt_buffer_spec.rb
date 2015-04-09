@@ -222,7 +222,7 @@ describe CryptBuffer do
     it "accepts an offset to start with on every wrap around" do
       expect(CryptBuffer("ABCXYZ").add(3,mod: 91,offset: 65).str).to eq("DEFABC")
     end
-    
+
     it "can be used as a ceasar cipher" do
       plain="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
       cipher="DEFGHIJKLMNOPQRSTUVWXYZABC"

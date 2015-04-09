@@ -3,7 +3,7 @@ Small toolbox for simple Crypto analysis and learning applied cryptography techn
 
 
 [![Build Status](https://travis-ci.org/scepticulous/crypto-toolbox.svg?branch=master)](https://travis-ci.org/scepticulous/crypto-toolbox)
-
+[![Code Climate](https://codeclimate.com/github/scepticulous/crypto-toolbox/badges/gpa.svg)](https://codeclimate.com/github/scepticulous/crypto-toolbox)
 ## CryptBuffer
 The CryptBuffer is made to make Xor operations on strings, bytes, hex-strings easy.
 
@@ -120,3 +120,15 @@ pp method:
 ```ruby
 CryptBuffer("0xfecc993").pp
 => 0xFECC99 (FE CC 99)
+```
+
+## Caesar Cipher
+Based on the CryptBuffer a sample Caesar Cipher implementation will be shipped
+
+```ruby
+Ciphers::Caesar.encode("AAAA","A") == "AAAA"
+
+Ciphers::Caesar.decode("BBBB","B") == "AAAA"
+Ciphers::Caesar.decode("AAAA","B") == "ZZZZ"
+```
+
