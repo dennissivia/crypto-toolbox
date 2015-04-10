@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    crypto-toolbox (0.0.6)
+    crypto-toolbox (0.0.7)
       aes (~> 0.5)
       ffi-hunspell (~> 0.3)
 
