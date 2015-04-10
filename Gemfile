@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 group :development,:test do
   gem 'pry'
+  gem 'version'
 end
 
 group :test do
