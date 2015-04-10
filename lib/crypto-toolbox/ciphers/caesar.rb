@@ -1,32 +1,38 @@
-require 'crypto-toolbox/crypt_buffer'
 
 module Ciphers
   class InvalidCaesarShift < RuntimeError; end
 
   class Caesar
-    def self.encode(msg,shift)
-      ::Ciphers::Caesar.new.encode(msg,shift)
+    def self.encipher(msg,shift)
+      ::Ciphers::Caesar.new.encipher(msg,shift)
     end
     
-    def self.decode(msg,shift)
-      ::Ciphers::Caesar.new.decode(msg,shift)
+    def self.decipher(msg,shift)
+      ::Ciphers::Caesar.new.decipher(msg,shift)
     end
 
-    def encode(message,shift)
+    def encipher(message,shift)
       assert_valid_shift!(shift)
       real_shift = convert_shift(shift)
       
-      message.split("").map do|part|
-        part == " " ? part : CryptBuffer.new(part).add(real_shift, mod: 91, offset: 65).str
+      message.split("").map do|char|
+        mod    = (char =~ /[a-z]/) ? 123 : 91
+        offset = (char =~ /[a-z]/) ? 97  : 65
+        
+        (char =~ /[^a-zA-Z]/) ? char : CryptBuffer.new(char).add(real_shift, mod: mod, offset: offset).str
       end.join
     end
 
-    def decode(message,shift)
+    def decipher(message,shift)
       assert_valid_shift!(shift)
       real_shift = convert_shift(shift)
-      message.split("").map do |part|
+      
+      message.split("").map do |char|
+        mod    = (char =~ /[a-z]/) ? 123 : 91
+        offset = (char =~ /[a-z]/) ? 97  : 65
+        
         # first reduce by 65 to map A to 0 ; then mod-sub with "A"(91)-65; and re-add the 65 to convert back to real ascii A value
-        part == " " ? part :  CryptBuffer(part).sub(65).mod_sub(real_shift,mod: 91-65).add(65).str
+        (char =~ /[^a-zA-Z]/) ? char :  CryptBuffer(char).sub(offset).mod_sub(real_shift,mod: mod-offset).add(offset).str
       end.join
     end
     private
@@ -38,7 +44,6 @@ module Ciphers
     def convert_shift(shift)
       ("A".."Z").to_a.each_with_index.inject({}){|memo,(val,index)| memo[val] = index; memo }[shift]
     end
-
   end
   
 end

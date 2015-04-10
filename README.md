@@ -129,9 +129,18 @@ CryptBuffer("0xfecc993").pp
 Based on the CryptBuffer a sample Caesar Cipher implementation will be shipped
 
 ```ruby
-Ciphers::Caesar.encode("AAAA","A") == "AAAA"
+Ciphers::Caesar.encipher("AAAA","A") == "AAAA"
 
-Ciphers::Caesar.decode("BBBB","B") == "AAAA"
-Ciphers::Caesar.decode("AAAA","B") == "ZZZZ"
+Ciphers::Caesar.decipher("BBBB","B") == "AAAA"
+Ciphers::Caesar.decipher("AAAA","B") == "ZZZZ"
 ```
 
+## Rot13
+Based on the Caesar Cipher a Rot13 is contained as well. 
+```ruby
+# since rot13 is invertable
+Ciphers::Rot13.encipher("AAAA") == "NNNN"
+Ciphers::Rot13.decipher("AAAA") == "NNNN"
+
+# thus the shorthand is:
+Ciphers::Rot13.apply("AAAA") == "NNNN"
