@@ -12,7 +12,6 @@ RSpec.describe Ciphers::Caesar do
       expect(subject.encode("ZZZZ","B")).to eq("AAAA")
     end
     it "preseves spaces" do
-      skip "implement whitespace exception"
       expect(subject.encode("    ","B")).to eq("    ")
     end
   end
@@ -28,7 +27,6 @@ RSpec.describe Ciphers::Caesar do
       expect(subject.decode("AAAA","B")).to eq("ZZZZ")
     end
     it "preserves spaces" do
-      skip "implement whitespace exception"
       expect(subject.decode("    ","B")).to eq("    ")
     end
 
@@ -37,7 +35,6 @@ RSpec.describe Ciphers::Caesar do
     let(:cipher){"WKH TXLFN EURZQ IRA MXPSV RYHU WKH ODCB GRJ"}
     let(:plain) {"THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG"}
     it "encodes correctly" do
-      skip "implement whitespace exception"
       expect(subject.encode(plain,"D")).to eq(cipher)
     end
   end
