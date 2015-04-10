@@ -1,6 +1,6 @@
 spec = Gem::Specification.new do |s|
   s.name        = 'crypto-toolbox'
-  s.version     = '0.0.9'
+  s.version     = '0.0.10'
   s.date        = '2015-04-08'
   s.summary     = "Toolbox for crypto analysis"
   s.description = <<-EOF
