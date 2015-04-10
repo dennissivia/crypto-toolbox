@@ -3,6 +3,8 @@ source 'https://rubygems.org'
 group :development,:test do
   gem 'pry'
   gem 'version'
+  gem 'byebug'
+  gem 'benchmark-ips'
 end
 
 group :test do

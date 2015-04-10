@@ -10,7 +10,20 @@ module Ciphers
     def self.decipher(msg,shift)
       ::Ciphers::Caesar.new.decipher(msg,shift)
     end
+=begin
+Within encipher and decipher we use a regexp comparision.
+Array lookups are must slower and byte comparision is a little faster,
+but much more complicated
 
+
+Alphabet letter lookup algorithm comparision:
+
+Comparison: (see benchmarks/string_comparision.rb)
+string.bytes.first == A :  3289762.7 i/s
+string =~ [A-Za-Z]      :  2010285.8 i/s - 1.64x slower
+Letter Array include?(A):    76997.0 i/s - 42.73x slower
+
+=end
     def encipher(message,shift)
       assert_valid_shift!(shift)
       real_shift = convert_shift(shift)
