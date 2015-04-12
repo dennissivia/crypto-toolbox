@@ -1,11 +1,10 @@
 spec = Gem::Specification.new do |s|
   s.name        = 'crypto-toolbox'
-  s.version     = '0.0.10'
+  s.version     = '0.0.12'
   s.date        = '2015-04-08'
   s.summary     = "Toolbox for crypto analysis"
   s.description = <<-EOF
-    The Crypto Toolbox offers tools to easily work with cryptographic primitives 
-    like arrays of Bytes or hextrings.
+    Easily work with primitives like arrays of Bytes or hextrings, to make learning und testing cryptographic methods work like a charme.
 EOF
   s.authors     = ["Dennis Sivia"]
   s.email       = 'dev@d-coded.de'
