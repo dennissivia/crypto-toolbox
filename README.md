@@ -38,6 +38,22 @@ CryptBuffer(64)
 CryptBuffer(0x64)
 => #<CryptBuffer:0x00000000619ae0 @bytes=[100]> 
 ```
+#### from_hex
+To force hextring interpretation of a input string one can also use from_hex.
+This is useful if the formatting of the input is uncertain.
+
+```ruby
+CryptBuffer.from_hex("f").hex
+=> "0F"
+
+CryptBuffer.from_hex("0x0f").hex
+=> "0F"
+
+CryptBuffer.from_hex("0F").hex
+ => "0F"
+
+```
+
 
 #### XORing
 

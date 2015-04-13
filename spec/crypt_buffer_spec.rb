@@ -231,7 +231,6 @@ describe CryptBuffer do
     end
   end
 
-  
   context "nth_bits" do
     let(:buffer){ CryptBuffer([1,10,100,200,245])  }
                   
@@ -246,6 +245,23 @@ describe CryptBuffer do
     end
   end
   
+  context "nth_bits" do
+    it "interprets a hextring with 0x as hex string" do
+      expect(CryptBuffer.from_hex("ef").hex).to eq("EF")
+    end
+
+    it "interprets a hexstring wihtout 0x as hexstring" do
+      expect(CryptBuffer.from_hex("0xef").hex).to eq("EF")
+    end
+    
+    it "handles nil properly" do
+      expect(CryptBuffer.from_hex(nil).hex).to eq("")
+    end
+
+    it "supports single char inputs" do
+      expect(CryptBuffer.from_hex("f").hex).to eq("0F")
+    end
+  end
 end
 
 

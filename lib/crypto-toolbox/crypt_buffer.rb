@@ -13,6 +13,17 @@ class CryptBuffer
     @bytes = bytes_from_any(input)
   end
 
+  # Make sure input strings are always interpreted as hex strings
+  # This is especially useful for unknown or uncertain inputs like
+  # strings with or without leading 0x
+  def self.from_hex(input)
+    hexstr =""
+    unless input.nil?
+      hexstr = (input =~ /^0x/ ? input : "0x#{pad_hex_char(input)}" )
+    end
+    CryptBuffer.new(hexstr)
+  end
+  
   def each(&block)
     @bytes.each(&block)
   end
@@ -142,8 +153,11 @@ class CryptBuffer
     end
   end
 
+  def self.pad_hex_char(str)
+    (str.length == 1) ? "0#{str}" : "#{str}"
+  end
   def normalize_hex(str)
-    tmp = (str.length == 1) ? "0#{str}" : "#{str}"
+    tmp = self.class.pad_hex_char(str)
     tmp.gsub(/(^0x|\s)/,"").upcase
   end
 
