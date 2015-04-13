@@ -88,6 +88,21 @@ It also allows to a custom modulus for the addition
 CryptBuffer("0x0f").add(15,mod:20).bytes  == 10
 => true
 ```
+
+#### nth_bits(n) | 0 <= n <= 7
+Returns the nths bits of each byte (starting with the least significant bit):
+
+```ruby
+# index 0..7
+
+buf = CryptBuffer("0xFECDE993").bits
+ => ["11111110", "11001101", "11101001", "10010011"] 
+       
+buf = CryptBuffer("0xFECDE993").nth_bits(2)
+ => [1, 1, 0, 0]
+```
+
+
 #### Output conversion
 
 ```ruby
@@ -109,6 +124,7 @@ CryptBuffer("AABB")
 => ["10101010", "10111011"]
 
 ```
+
 
 Shortcut methods are: 
 ```ruby

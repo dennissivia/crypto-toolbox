@@ -2,6 +2,9 @@ require 'aes'
 require 'openssl'
 
 class CryptBuffer
+  class OutOfRangeError < RuntimeError; end
+
+  
   attr_accessor :bytes
 
   include Enumerable
@@ -31,6 +34,15 @@ class CryptBuffer
   end
   alias_method :s, :str
 
+
+  # Returns an array of the nth least sigificant by bit of each byte
+  def nth_bits(n)
+    raise OutOfRangeError if n < 0
+    raise OutOfRangeError if n > 7
+    
+    bits.map{|b| b.reverse[n].to_i }
+  end
+  
   def bits
     map{|b| "%08d" % b.to_s(2) }
   end

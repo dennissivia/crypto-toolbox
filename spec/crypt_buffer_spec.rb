@@ -230,6 +230,23 @@ describe CryptBuffer do
       expect(CryptBuffer(plain).add(shift,mod: 91,offset: 65).str).to eq(cipher)
     end
   end
+
+  
+  context "nth_bits" do
+    let(:buffer){ CryptBuffer([1,10,100,200,245])  }
+                  
+    it "returns an array of the nths bits of its bytes" do
+      expect((buffer).nth_bits(0)).to eq([1,0,0,0,1])
+    end
+    it "fails on negative indices" do
+      expect{(buffer).nth_bits(-1)}.to raise_error(CryptBuffer::OutOfRangeError)
+    end
+    it "fails on too high indices" do
+      expect{(buffer).nth_bits(8)}.to raise_error(CryptBuffer::OutOfRangeError)
+    end
+  end
+  
 end
+
 
 

@@ -1,7 +1,4 @@
 
-#require 'shellwords'
-require 'ffi/hunspell'
-
 =begin
 # References:
 #
@@ -12,18 +9,20 @@ require 'ffi/hunspell'
 module Analyzers
   class VigenereXor
     def jot(message, debug: false)
-      if ENV["SEMI_AUTO_ANALYSIS"]
-        if debug == false || ENV["DEBUG_ANALYSIS"]
-          puts message
-        end
+      if debug == false || ENV["DEBUG_ANALYSIS"]
+        puts message
       end
     end
     def print_delimiter_line
       puts "=====================================================================" 
     end
-
+    def acceptable_char?(byte)
+      (byte > 31 && byte < 123) && (byte != 60 && byte !=64)
+    end
+    
     def find_pattern(buf)
-      bitstring = buf.bits.map{|b| b[0]}.join("")
+      bitstring = buf.nth_bits(0).join("")
+      
       1.upto([buf.bytes.length,62].min).map do |ksize|
         parts = bitstring.scan(/.{#{ksize}}/)
         if parts.uniq.length == 1
@@ -35,9 +34,6 @@ module Analyzers
     end
     
     def analyze(input)
-      require "crypto-toolbox"
-      require "byebug"
-
       buf = CryptBuffer.new(input)
       result = find_pattern(buf)
 
@@ -58,7 +54,7 @@ module Analyzers
 
         candidate_map[key_byte]=[]
         1.upto(255).each do |possible_key_value|
-          if smart_buf.xor_all_with(possible_key_value).bytes.all?{|e| e > 31 && e < 123 && e != 60 && e !=64}
+          if smart_buf.xor_all_with(possible_key_value).bytes.all?{|byte| acceptable_byte?(byte) }
             jot("YES: " + smart_buf.xor_all_with(possible_key_value).to_s,debug: true)
             candidate_map[key_byte] << possible_key_value
           else
@@ -81,20 +77,22 @@ module Analyzers
       if ENV["SEMI_AUTO_ANALYSIS"] && ENV["DEBUG_ANALYSIS"]
         print_candidate_encryptions(candidate_map,keylen,buf)
       end
+      
+      results = KeySearch::Filter::AsciiPlain.new(combinations,buf).filter
+      report_result(results,buf)
+    end
 
-      result = KeySearch::Filter::AsciiPlain.new(combinations,buf).filter
-      unless result.empty?
+    def report_result(results,buf)
+       unless results.empty?
         jot "[Success] Found valid result(s)"
-        result.each do |r|
+        results.each do |r|
           print_delimiter_line
           jot r.xor(buf).str
           print_delimiter_line
         end
       end
-
-      
     end
-
+    
     def print_candidate_encryptions(candidate_map,keylen,buf)
       # printout for debugging. (Manual analysis of the characters)
       print "======= Decryption result of first #{keylen} bytes with all candidate keys =======\n" 

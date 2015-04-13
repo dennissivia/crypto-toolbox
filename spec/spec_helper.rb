@@ -1,5 +1,6 @@
 require 'rspec'
 require 'crypto-toolbox'
+require 'pry'
 
 require 'coveralls'
 Coveralls.wear!
