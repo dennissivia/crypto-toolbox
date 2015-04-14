@@ -1,14 +1,16 @@
 require 'aes'
 require 'openssl'
+require 'forwardable'
 
 class CryptBuffer
   class OutOfRangeError < RuntimeError; end
-
   
   attr_accessor :bytes
 
   include Enumerable
-
+  extend ::Forwardable
+  def_delegators :@bytes, :[], :empty?,:include?, :length
+  
   def initialize(input)
     @bytes = bytes_from_any(input)
   end
@@ -83,6 +85,24 @@ class CryptBuffer
     end
     CryptBuffer(tmp)
   end
+
+
+  def xor_at(input,pos)
+    return self if input.nil? || (pos.abs > length)
+    
+    case input
+    when Array
+      # map our current data to xor all inputs with the given bytepos.
+      # all other bytes are kept as they were
+      tmp = bytes.map.with_index{|b,i| i == pos ? xor_multiple(b,input) : b }
+      CryptBuffer(tmp)
+    else
+      tmp = bytes
+      tmp[pos] = tmp[pos] ^ input
+      CryptBuffer(tmp)
+    end 
+  end
+  
   def xor(input,expand_input: false)
     if expand_input
       xor_all_with(input)
@@ -126,6 +146,9 @@ class CryptBuffer
       # expand the input to the full length of the internal data
       (input * n) + input[0,rest]
     end
+  end
+  def xor_multiple(byte,bytes)
+    ([byte] + bytes).reduce(:^)
   end
   def bytes_from_any(input)
     case input

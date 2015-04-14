@@ -262,6 +262,69 @@ describe CryptBuffer do
       expect(CryptBuffer.from_hex("f").hex).to eq("0F")
     end
   end
+  context "#length" do
+    it "responds to length with the amout of bytes" do
+      expect(CryptBuffer("0xFFeeCC01").length).to eq(4)
+    end
+    it "support empty data" do
+      expect(CryptBuffer([]).length).to eq(0)
+    end
+  end
+  context "delegates #empty?" do
+    it "delegates empty? for none-empty data" do
+      expect(CryptBuffer("0xFFeeCC01").empty?).to be_falsy
+    end
+    it "delegates empty? for empty data" do
+      expect(CryptBuffer([]).empty?).to be_truthy
+    end
+  end
+  context "#[]" do
+    let(:buf){ CryptBuffer("0x050607") }
+    it "delegates []" do
+      expect(buf[0]).to eq(5)
+      expect(buf[1]).to eq(6)
+      expect(buf[2]).to eq(7)
+    end
+    it "works for invalid negative indices" do
+      expect(buf[-1]).to eq(7)
+    end
+    it "works for too high indices" do
+      expect(buf[9]).to eq(nil)
+    end
+  end
+
+  context "#xor_at(val,pos)" do
+    let(:buf){ CryptBuffer([1,1,2,2,3,3]) }
+    
+    it "xors the byte at the given position" do
+      expect(buf.xor_at(200,0).bytes).to eq([201,1,2,2,3,3])
+    end
+    it "supports valid negative indices" do
+      expect(buf.xor_at(200,-1).bytes).to eq([1,1,2,2,3,203])
+    end
+    it "ignores invalid negative indices" do
+      expect(buf.xor_at(200,-100).bytes).to eq([1,1,2,2,3,3])
+    end
+    it "supports the maximum negative index" do
+      expect(buf.xor_at(200,-6).bytes).to eq([201,1,2,2,3,3])
+    end
+    it "does nothing if the index is over the upper bound" do
+      expect(buf.xor_at(200,200).bytes).to eq([1,1,2,2,3,3])
+    end
+    context "#xor_at([x,..],pos)" do
+      it "supports array index to do multiple xors" do
+        expect(buf.xor_at([5,15],0).bytes).to eq([11,1,2,2,3,3])
+      end
+      it "supports empty arrays" do
+        expect(buf.xor_at([],0).bytes).to eq([1,1,2,2,3,3])
+      end
+      it "handles nil" do
+        expect(buf.xor_at(nil,0).bytes).to eq([1,1,2,2,3,3])
+      end
+    end
+  end
+  
+  context "split(block_length:16)"
 end
 
 
