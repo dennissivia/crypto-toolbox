@@ -16,12 +16,14 @@ module Analyzers
     def print_delimiter_line
       puts "=====================================================================" 
     end
+
+    # Checks if a given byte maps to a reasonable english language character
     def acceptable_char?(byte)
       (byte > 31 && byte < 123) && (byte != 60 && byte !=64)
     end
     
     def find_pattern(buf)
-      bitstring = buf.nth_bits(0).join("")
+      bitstring = buf.nth_bits(7).join("")
       
       1.upto([buf.bytes.length,62].min).map do |ksize|
         parts = bitstring.scan(/.{#{ksize}}/)
@@ -54,7 +56,7 @@ module Analyzers
 
         candidate_map[key_byte]=[]
         1.upto(255).each do |possible_key_value|
-          if smart_buf.xor_all_with(possible_key_value).bytes.all?{|byte| acceptable_byte?(byte) }
+          if smart_buf.xor_all_with(possible_key_value).bytes.all?{|byte| acceptable_char?(byte) }
             jot("YES: " + smart_buf.xor_all_with(possible_key_value).to_s,debug: true)
             candidate_map[key_byte] << possible_key_value
           else

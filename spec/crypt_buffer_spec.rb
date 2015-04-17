@@ -324,8 +324,29 @@ describe CryptBuffer do
     end
   end
   
-  context "split(block_length:16)"
+  context "chunks_of(N) split buffer into parts of size N" do
+    let(:buf) { CryptBuffer([1,1,1,2,2,2,3,3,3]) }
+
+    context "exact multiples of N" do
+      let(:part1) { CryptBuffer([1,1,1]) }
+      let(:part2) { CryptBuffer([2,2,2]) }
+      let(:part3) { CryptBuffer([3,3,3]) }
+    
+      it "split a chunks without rest when N is a multiple of the bytes" do
+        expect(buf.chunks_of(3)).to eq([part1,part2,part3])
+      end
+    end
+    context "not exact multiples of N" do
+      let(:part1) { CryptBuffer([1,1,1,2]) }
+      let(:part2) { CryptBuffer([2,2,3,3]) }
+      let(:part3) { CryptBuffer([3]) }
+      it "works with byte amounts that are not a multiple of N" do
+        expect(buf.chunks_of(4)).to eq([part1,part2,part3])
+      end
+    end
+  end
 end
+
 
 
 
