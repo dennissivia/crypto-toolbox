@@ -1,165 +1,24 @@
 require 'aes'
 require 'openssl'
 require 'forwardable'
-
-module CryptBufferAspect
-  module Comparable
-    def ==(other)
-      bytes == bytes_from_any(other)
-    end
-
-  end
-
-  module ByteExpander
-    private
-    def expand_bytes(input,total)
-      if input.length >= total
-        input
-      else
-        n = total / input.length
-        rest = total % input.length
-        
-        # expand the input to the full length of the internal data
-        (input * n) + input[0,rest]
-      end
-    end
-  end
-  
-  module Convertable
-    def hex
-      bytes2hex(bytes).upcase
-    end
-    
-    alias_method :h, :hex
-    
-    def chars
-      map{|b| b.to_i.chr}
-    end
-    alias_method :c, :chars
-    
-    def str
-      chars.join
-    end
-    alias_method :s, :str
-
-    def bits
-      map{|b| "%08d" % b.to_s(2) }
-    end
-
-    def to_s
-      str
-    end
-    private
-    def bytes2hex(bytes)
-      bytes.map{|b| b.to_s(16)}.map{|hs| hs.length == 1 ? "0#{hs}" : hs  }.join
-    end
-  end
-
-  module Xorable
-    
-    def xor_at(input,pos)
-      return self if input.nil? || (pos.abs > length)
-      
-      case input
-      when Array
-        # map our current data to xor all inputs with the given bytepos.
-        # all other bytes are kept as they were
-        tmp = bytes.map.with_index{|b,i| i == pos ? xor_multiple(b,input) : b }
-        CryptBuffer(tmp)
-      else
-        tmp = bytes
-        tmp[pos] = tmp[pos] ^ input
-        CryptBuffer(tmp)
-      end 
-    end
-    
-    def xor(input,expand_input: false)
-      if expand_input
-        xor_all_with(input)
-      else
-        xor_bytes(bytes_from_any(input))
-      end
-    end
-
-    def xor_all_with(input)
-      expanded = expand_bytes(bytes_from_any(input),self.bytes.length)
-      xor_bytes(expanded)
-    end
-
-
-    def xor_space
-      xor(0x20,expand_input: true)
-    end
-    private
-    
-    def xor_bytes(byt)
-      len = [self.bytes.size,byt.size].min
-      result = self.bytes[0...len].map.with_index{|b,i| b ^ byt[i] } + self.bytes[len,self.bytes.length - len]
-      self.class.new(result)
-    end
-
-    def xor_hex(hex)
-      x = hex2bytes(hex)
-      xor_bytes(x)
-    end
-
-  end
-
-  module ByteManipulation
-    
-    def modulus(mod)
-      real_mod = sanitize_modulus(mod)
-      CryptBuffer( bytes.map{|b| b % real_mod } )
-    end
-
-    def mod_sub(n,mod: 256)
-      tmp = bytes.map do |byte|
-        val = byte.to_bn.mod_sub(n,mod).to_i
-      end
-      CryptBuffer(tmp)
-    end
-
-    def sub(n)
-      CryptBuffer( bytes.map{|byte| byte -n } )
-    end
-    
-    def add(n, mod: 256, offset: 0)
-      real_mod = [256,mod].min
-
-      tmp = bytes.map do |b|
-        val = (b + n) % real_mod
-        val >= offset ? val : val+offset
-      end
-      CryptBuffer(tmp)
-    end
-  end
-
-
-  module PrettyPrint
-    def pp
-      puts pretty_hexstr
-    end
-    
-    private
-    def pretty_hexstr
-      str = h.scan(/.{2}/).to_a.join(" ")
-      "0x#{h.upcase} (#{str.upcase})"
-    end
-  end
-end
-
+require 'crypto-toolbox/crypt_buffer/concerns/byte_expander.rb'
+require 'crypto-toolbox/crypt_buffer/concerns/byte_manipulation.rb'
+require 'crypto-toolbox/crypt_buffer/concerns/comparable.rb'
+require 'crypto-toolbox/crypt_buffer/concerns/convertable.rb'
+require 'crypto-toolbox/crypt_buffer/concerns/xor.rb'
+require 'crypto-toolbox/crypt_buffer/concerns/pretty_print.rb'
 
 
 class CryptBuffer
   class OutOfRangeError < RuntimeError; end
 
 
-  include CryptBufferAspect::Convertable
-  include CryptBufferAspect::Comparable
-  include CryptBufferAspect::Xorable
-  include CryptBufferAspect::ByteManipulation
-  include CryptBufferAspect::PrettyPrint
-  include CryptBufferAspect::ByteExpander
+  include CryptBufferConcern::Convertable
+  include CryptBufferConcern::Comparable
+  include CryptBufferConcern::Xor
+  include CryptBufferConcern::ByteManipulation
+  include CryptBufferConcern::PrettyPrint
+  include CryptBufferConcern::ByteExpander
   
   extend Forwardable
   def_delegators :@bytes, :[], :empty?,:include?, :length
