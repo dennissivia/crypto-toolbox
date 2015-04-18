@@ -345,6 +345,7 @@ describe CryptBuffer do
       end
     end
   end
+  context "#read_hex reads hex data from IO"
 end
 
 
