@@ -11,8 +11,7 @@ require 'crypto-toolbox/crypt_buffer/concerns/pretty_print.rb'
 
 class CryptBuffer
   class OutOfRangeError < RuntimeError; end
-
-
+  
   include CryptBufferConcern::Convertable
   include CryptBufferConcern::Comparable
   include CryptBufferConcern::Xor
@@ -48,7 +47,6 @@ class CryptBuffer
     @bytes.each(&block)
   end
 
-
   # Returns an array of the nth least sigificant by bit of each byte
   def nth_bits(n)
     raise OutOfRangeError if n < 0
@@ -70,54 +68,59 @@ class CryptBuffer
   def xor_multiple(byte,bytes)
     ([byte] + bytes).reduce(:^)
   end
+  
   def bytes_from_any(input)
     case input
-      when Array
-        input
-      when String
-        if input.match(/^0x[0-9a-fA-F]+$/).nil?
-          str2bytes(input)
-        else
-          hex2bytes(normalize_hex(input))
-        end
-      when CryptBuffer
-        input.b
-      when Fixnum
-        # integers as strings dont have a 0x prefix
-        if input.to_s(16).match(/^[0-9a-fA-F]+$/)
-          # assume 0x prefixed integer
-          hex2bytes(normalize_hex(input.to_s(16)))
-        else
-          # regular number
-          [input].pack('C*').bytes
-        end
-      else
-        raise "Unsupported input: #{input.inspect} of class #{input.class}"
+    when Array
+      input
+    when String
+      str2bytes(input)
+    when CryptBuffer
+      input.b
+    when Fixnum
+      int2bytes(input)
+    else
+      raise "Unsupported input: #{input.inspect} of class #{input.class}"
     end
   end
 
-  def self.pad_hex_char(str)
-    (str.length == 1) ? "0#{str}" : "#{str}"
-  end
   def normalize_hex(str)
     tmp = self.class.pad_hex_char(str)
     tmp.gsub(/(^0x|\s)/,"").upcase
   end
-
+  
+  def self.pad_hex_char(str)
+    (str.length == 1) ? "0#{str}" : "#{str}"
+  end
+  
   def strip_hex_prefix(hex)
     raise "remove 0x from hexinput"
   end
-
+  
+  def int2bytes(input)
+    # integers as strings dont have a 0x prefix
+    if input.to_s(16).match(/^[0-9a-fA-F]+$/)
+      # assume 0x prefixed integer
+      hex2bytes(normalize_hex(input.to_s(16)))
+    else
+      # regular number
+      [input].pack('C*').bytes
+    end
+  end
+  
   def hex2bytes(hexstr)
     hexstr.scan(/../).map{|h| h.to_i(16) }
   end
 
   def str2bytes(str)
-    str.bytes.to_a
+    if str.match(/^0x[0-9a-fA-F]+$/).nil?
+      str.bytes.to_a
+    else
+      hex2bytes(normalize_hex(str))
+    end
   end
-
-
 end
+
 
 def CryptBuffer(input)
   CryptBuffer.new(input)

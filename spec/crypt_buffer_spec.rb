@@ -346,6 +346,12 @@ describe CryptBuffer do
     end
   end
   context "#read_hex reads hex data from IO"
+  context "padding convern" do
+    it "#padding returns the the included padding"
+    it "#padding returns [] if no pkcs5 padding is present"
+    it "#strip_padding"
+    it "#pad!(n)"
+  end
 end
 
 
