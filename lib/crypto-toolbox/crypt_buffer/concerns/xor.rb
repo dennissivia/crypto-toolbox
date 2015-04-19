@@ -29,7 +29,6 @@ module CryptBufferConcern
       xor_bytes(expanded)
     end
 
-
     def xor_space
       xor(0x20,expand_input: true)
     end

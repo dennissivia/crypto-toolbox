@@ -7,11 +7,10 @@ Small toolbox for simple Crypto analysis and learning applied cryptography techn
 [![Coverage Status](https://coveralls.io/repos/scepticulous/crypto-toolbox/badge.svg?branch=master)](https://coveralls.io/r/scepticulous/crypto-toolbox?branch=master)
 [![Gem Version](https://badge.fury.io/rb/crypto-toolbox.svg)](http://badge.fury.io/rb/crypto-toolbox)
 
-## CryptBuffer
+# CryptBuffer 
 The CryptBuffer is made to make Xor operations on strings, bytes, hex-strings easy.
 
-### Usage Examples
-#### Input Type conversion
+## Input Conversion
 
 ```ruby
 # Strings beginning with 0x are handles has hex strings
@@ -38,7 +37,7 @@ CryptBuffer(64)
 CryptBuffer(0x64)
 => #<CryptBuffer:0x00000000619ae0 @bytes=[100]> 
 ```
-#### from_hex
+### from_hex
 To force hextring interpretation of a input string one can also use from_hex.
 This is useful if the formatting of the input is uncertain.
 
@@ -55,8 +54,9 @@ CryptBuffer.from_hex("0F").hex
 ```
 
 
-#### XORing
+## XORing
 
+### CryptBuffer#xor
 Xoring two CryptBuffers
 ```ruby
 key = CryptBuffer("my-super-secret-key")
@@ -68,6 +68,7 @@ Xor any compatible input for a Cryptbuffer:
 ```ruby
 key="my-super-secret-key"
 msg="my-public-message!!"
+
 CryptBuffer(key).xor(msg).xor(CryptBuffer(key)).str
  => "my-public-message!!" 
 
@@ -79,19 +80,49 @@ CryptBuffer("u").xor(1).str
 
 CryptBuffer(0x90).xor(1).xor("0xff").str
  => "n" 
+ ```
+
+
+### CryptBuffer#xor_at(val,pos)
+```ruby
+buf = CryptBuffer([1,1,2,2,3,3]) }
+
+buf.xor_at(200,0).bytes
+=> [201,1,2,2,3,3]
+
+# it also allows negative array-like indexing
+
+buf.xor_at(200,-1).bytes
+=> [1,1,2,2,3,203]
+
+```
+
+### CryptBuffer#xor_all_with(byte)
+```ruby
+buf = CryptBuffer([1,1,1]) }
+
+buf.xor_all_with(200).bytes
+=> [201,201,201]
+```
+
+
+### CryptBuffer#xor_space
+Simple shorthand for
+
+```ruby
+CryptBuffer(input).xor(0x20)
 ```
 
 
 
-#### Method Chaining
+## Method Chaining
 ```ruby
 CryptBuffer("secret-key").xor("my message").xor_all_with(0x20).xor("secret-key").xor_all_with(0x20).str
 => "my message"
 ```
-####
-Enumerable
 
-#### add(n,mod)
+## Arithmetic
+### add(n,mod)
 add allows to add a certain value to every byte in the buffer:
 
 ```ruby
@@ -105,7 +136,7 @@ CryptBuffer("0x0f").add(15,mod:20).bytes  == 10
 => true
 ```
 
-#### nth_bits(n) | 0 <= n <= 7
+## nth_bits(n) | 0 <= n <= 7
 Returns the nths bits of each byte (starting with the least significant bit):
 
 ```ruby
@@ -119,7 +150,7 @@ buf = CryptBuffer("0xFECDE993").nth_bits(2)
 ```
 
 
-#### Output conversion
+## Output conversion
 
 ```ruby
 buf = CryptBuffer("0xfecc993")
@@ -150,7 +181,7 @@ b => bytes
 c => chars
 ```
 
-#### Debug output 
+## Debug output 
 pp method:
 ```ruby
 CryptBuffer("0xfecc993").pp
