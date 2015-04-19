@@ -1,5 +1,5 @@
 module CryptBufferConcern
-  module ByteManipulation
+  module Arithmetic
     
     def modulus(mod)
       real_mod = sanitize_modulus(mod)

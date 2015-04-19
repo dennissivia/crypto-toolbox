@@ -1,30 +1,36 @@
 require 'aes'
 require 'openssl'
 require 'forwardable'
+
+require 'crypto-toolbox/crypt_buffer/concerns/arithmetic.rb'
 require 'crypto-toolbox/crypt_buffer/concerns/byte_expander.rb'
-require 'crypto-toolbox/crypt_buffer/concerns/byte_manipulation.rb'
 require 'crypto-toolbox/crypt_buffer/concerns/comparable.rb'
 require 'crypto-toolbox/crypt_buffer/concerns/convertable.rb'
-require 'crypto-toolbox/crypt_buffer/concerns/xor.rb'
+require 'crypto-toolbox/crypt_buffer/concerns/padding.rb'
 require 'crypto-toolbox/crypt_buffer/concerns/pretty_print.rb'
-
+require 'crypto-toolbox/crypt_buffer/concerns/xor.rb'
 
 class CryptBuffer
   class OutOfRangeError < RuntimeError; end
   
+  include CryptBufferConcern::Arithmetic
+  include CryptBufferConcern::ByteExpander
   include CryptBufferConcern::Convertable
   include CryptBufferConcern::Comparable
-  include CryptBufferConcern::Xor
-  include CryptBufferConcern::ByteManipulation
+  include CryptBufferConcern::Padding
   include CryptBufferConcern::PrettyPrint
-  include CryptBufferConcern::ByteExpander
+  include CryptBufferConcern::Xor
+
   
+  include Enumerable
   extend Forwardable
-  def_delegators :@bytes, :[], :empty?,:include?, :length
+  def_delegators :@bytes, :[], :empty?,:include?, :each, :length
 
-
+  
   attr_accessor :bytes
   alias_method :b, :bytes
+
+
 
   
   def initialize(input)
@@ -42,11 +48,6 @@ class CryptBuffer
     CryptBuffer.new(hexstr)
   end
 
-  include Enumerable
-  def each(&block)
-    @bytes.each(&block)
-  end
-
   # Returns an array of the nth least sigificant by bit of each byte
   def nth_bits(n)
     raise OutOfRangeError if n < 0
@@ -58,6 +59,8 @@ class CryptBuffer
   def chunks_of(n)
     self.bytes.each_slice(n).map{|chunk| CryptBuffer(chunk) }
   end
+
+
 
   
   private

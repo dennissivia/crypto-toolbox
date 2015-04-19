@@ -55,7 +55,7 @@ Letter Array include?(A):    76997.0 i/s - 42.73x slower
     end
 
     def convert_shift(shift)
-      ("A".."Z").to_a.each_with_index.inject({}){|memo,(val,index)| memo[val] = index; memo }[shift]
+      ("A".."Z").to_a.each.with_index.with_object({}){|(val,index),hsh| hsh[val] = index }[shift]
     end
   end
   
