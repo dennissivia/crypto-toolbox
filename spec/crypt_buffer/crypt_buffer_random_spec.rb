@@ -27,3 +27,4 @@ RSpec.describe CryptBuffer do
   end
 
 end
+

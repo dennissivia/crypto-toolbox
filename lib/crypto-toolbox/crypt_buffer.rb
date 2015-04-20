@@ -66,10 +66,6 @@ class CryptBuffer
 
   
   private
-  def sanitize_modulus(mod)
-    (mod > 0) ? mod : 256
-  end
-
   def xor_multiple(byte,bytes)
     ([byte] + bytes).reduce(:^)
   end

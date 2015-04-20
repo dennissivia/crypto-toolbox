@@ -26,6 +26,12 @@ module CryptBufferConcern
       end
       CryptBuffer(tmp)
     end
-  end
 
+    private
+    
+    def sanitize_modulus(mod)
+      (mod > 0) ? mod : 256
+    end
+
+  end
 end

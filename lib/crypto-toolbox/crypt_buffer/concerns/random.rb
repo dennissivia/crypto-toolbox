@@ -1,6 +1,10 @@
 module CryptBufferConcern
   module Random
-    
+    # This module provides an interface to generate
+    # a CryptBuffer with n bytes of random Integer
+    # between 1 and 256
+    # This is required for generating pseudo keys
+
     def self.included(base)
       base.extend(ClassMethods)
     end
@@ -14,12 +18,9 @@ module CryptBufferConcern
 
       private
       def generate_bytes(n,seed)
-        if n.nil? || n.zero?
-          []
-        else
-          prng = ::Random.new(seed)
-          (1..n).map{|e| prng.rand 256 }
-        end
+        prg = ::Random.new(seed)
+
+        Array.new(n.to_i) { prg.rand 256 }
       end
     end
 
