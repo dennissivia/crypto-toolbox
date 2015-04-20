@@ -1,7 +1,7 @@
 spec = Gem::Specification.new do |s|
   s.name        = 'crypto-toolbox'
   s.version     = File.read("./VERSION").strip
-  s.date        = '2015-04-08'
+  s.date        = Time.now.strftime("%Y-%m-%d")
   s.summary     = "Toolbox for crypto analysis"
   s.description = <<-EOF
     Easily work with primitives like arrays of Bytes or hextrings, to make learning und testing cryptographic methods work like a charme.
