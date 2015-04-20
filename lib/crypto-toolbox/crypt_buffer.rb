@@ -8,6 +8,7 @@ require 'crypto-toolbox/crypt_buffer/concerns/comparable.rb'
 require 'crypto-toolbox/crypt_buffer/concerns/convertable.rb'
 require 'crypto-toolbox/crypt_buffer/concerns/padding.rb'
 require 'crypto-toolbox/crypt_buffer/concerns/pretty_print.rb'
+require 'crypto-toolbox/crypt_buffer/concerns/random.rb'
 require 'crypto-toolbox/crypt_buffer/concerns/xor.rb'
 
 class CryptBuffer
@@ -19,6 +20,7 @@ class CryptBuffer
   include CryptBufferConcern::Comparable
   include CryptBufferConcern::Padding
   include CryptBufferConcern::PrettyPrint
+  include CryptBufferConcern::Random
   include CryptBufferConcern::Xor
 
   
