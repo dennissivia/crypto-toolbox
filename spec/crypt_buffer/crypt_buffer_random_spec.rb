@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe CryptBuffer do
-  context ".random(n)",:wip => true do
+  context ".random(n)" do
     let(:empty) { CryptBuffer([]) }
     it "returns a CryptBuffer" do
       expect(CryptBuffer.random(10).kind_of?(CryptBuffer)).to be_truthy
