@@ -1,4 +1,5 @@
-load "crypt_buffer.rb"
+require 'crypto-toolbox'
+
 a = "0xA8"
 b = "0xED"
 c = "0xBD"

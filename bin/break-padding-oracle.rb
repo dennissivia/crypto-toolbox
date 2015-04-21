@@ -6,16 +6,7 @@ if ARGV[0].nil?
   $stderr.puts "Missing Argument: Ciphertext (hexstring)"
 else
   ciphertext = ARGV[0]
-
-  Analyzers::VigenereXor.new.analyze(ciphertext)
+  
+  Analyzers::PaddingOracle::Analyzer.new.analyze(ciphertext)
 end
-
-
-
-
-
-
-
-
-
 

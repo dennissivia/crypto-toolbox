@@ -1,5 +1,5 @@
-require_relative './../crypt_buffer.rb'
-require_relative './../spell_checker.rb'
+require 'crypto-toolbox'
+require 'pry'
 require 'pp'
 
 class CryptoAnalyzer
