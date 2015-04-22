@@ -32,7 +32,7 @@ Letter Array include?(A):    76997.0 i/s - 42.73x slower
         mod    = (char =~ /[a-z]/) ? 123 : 91
         offset = (char =~ /[a-z]/) ? 97  : 65
         
-        (char =~ /[^a-zA-Z]/) ? char : CryptBuffer.new(char).add(real_shift, mod: mod, offset: offset).str
+        (char =~ /[^a-zA-Z]/) ? char : CryptBuffer(char).add(real_shift, mod: mod, offset: offset).str
       end.join
     end
 

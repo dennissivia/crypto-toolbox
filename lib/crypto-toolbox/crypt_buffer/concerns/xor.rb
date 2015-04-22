@@ -20,12 +20,12 @@ module CryptBufferConcern
       if expand_input
         xor_all_with(input)
       else
-        xor_bytes(bytes_from_any(input))
+        xor_bytes(CryptBuffer(input).bytes)
       end
     end
 
     def xor_all_with(input)
-      expanded = expand_bytes(bytes_from_any(input),self.bytes.length)
+      expanded = expand_bytes(CryptBuffer(input).bytes,self.bytes.length)
       xor_bytes(expanded)
     end
 

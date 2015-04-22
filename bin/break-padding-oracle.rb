@@ -9,4 +9,3 @@ else
   
   Analyzers::PaddingOracle::Analyzer.new.analyze(ciphertext)
 end
-

@@ -1,7 +1,7 @@
 module CryptBufferConcern
   module Comparable
     def ==(other)
-      bytes == bytes_from_any(other)
+      bytes == CryptBuffer(other).bytes
     end
   end
 end

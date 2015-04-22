@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe CryptBuffer do
+describe CryptBufferInputConverter do
   let(:short){ CryptBuffer(1)    } 
   let(:mid)  { CryptBuffer("0xaAbB") }
   let(:long) { CryptBuffer("The House")  }
@@ -11,10 +11,10 @@ describe CryptBuffer do
 
     [0x20,"0x20"," ",32].each do |input|
       it "should accept a #{input} of type #{input.class}" do
-        expect{CryptBuffer.new(input)}.to_not raise_error
+        expect{CryptBuffer(input)}.to_not raise_error
       end
       it "converts input of type #{input.class} properly" do
-        expect(CryptBuffer.new(input).bytes).to eq([value])
+        expect(CryptBuffer(input).bytes).to eq([value])
       end
       it "allows conversion via CryptBuffer()" do
         expect(CryptBuffer(input).bytes).to eq([value])

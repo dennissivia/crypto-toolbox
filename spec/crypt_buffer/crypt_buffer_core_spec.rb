@@ -5,16 +5,15 @@ describe CryptBuffer do
   let(:mid)  { CryptBuffer("0xaAbB") }
   let(:long) { CryptBuffer("The House")  }
   let(:empty){ CryptBuffer([])   }
+  let(:buffer){ CryptBuffer([1,10,100,200,245])  }
   
   context "#bytes" do
     it "gives access to the byte repreesntation" do
-      expect(CryptBuffer.new(0x0F).bytes).to eq([15])
+      expect(CryptBuffer(0x0F).bytes).to eq([15])
     end
   end
 
-  context "nth_bits" do
-    let(:buffer){ CryptBuffer([1,10,100,200,245])  }
-                  
+  context "#nth_bit" do
     it "returns an array of the nths bits of its bytes" do
       expect((buffer).nth_bits(0)).to eq([1,0,0,0,1])
     end
@@ -24,6 +23,9 @@ describe CryptBuffer do
     it "fails on too high indices" do
       expect{(buffer).nth_bits(8)}.to raise_error(CryptBuffer::OutOfRangeError)
     end
+  end
+
+  context "#from_hex" do
     it "interprets a hextring with 0x as hex string" do
       expect(CryptBuffer.from_hex("ef").hex).to eq("EF")
     end

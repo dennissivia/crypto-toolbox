@@ -9,13 +9,3 @@ else
 
   Analyzers::VigenereXor.new.analyze(ciphertext)
 end
-
-
-
-
-
-
-
-
-
-

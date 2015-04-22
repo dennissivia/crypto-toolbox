@@ -8,6 +8,25 @@
 =end
 module Analyzers
   class VigenereXor
+    # This crypto analyzers takes a hex encoded ciphertext as input string
+    # and tries to find the plaintext by doing the following crypto analysis:
+    #
+    # 1) Search for a recurring pattern of the 8th bit of the ciphertext
+    # since ascii plaintext chars to have this bit set, the pattern will
+    # imply the key length
+    #
+    # 2) Create a map of all possible bytes for every position of the key
+    # The amount of candidates can be reduced by only allowing bytes that
+    # lead to a ascii english char
+    #
+    # 3) create the product of all possible combinations
+    # This only works for short key lengths due to the exponential growth
+    #
+    # 4) Do an English language Analysis of the possible result by using
+    # the error rate of the candidate plaintext using hunspell
+    #
+
+    
     def jot(message, debug: false)
       if debug == false || ENV["DEBUG_ANALYSIS"]
         puts message
@@ -25,7 +44,7 @@ module Analyzers
     def find_pattern(buf)
       bitstring = buf.nth_bits(7).join("")
       
-      1.upto([buf.bytes.length,62].min).map do |ksize|
+      1.upto(buf.bytes.length).map do |ksize|
         parts = bitstring.scan(/.{#{ksize}}/)
         if parts.uniq.length == 1
           parts.first
@@ -34,68 +53,77 @@ module Analyzers
         end
       end.compact.first
     end
-    
-    def analyze(input)
-      buf = CryptBuffer.from_hex(input)
-      result = find_pattern(buf)
 
-      if result.nil?
-        $stderr.puts "failed to find keylength by ASCII-8-Bit anlysis"
-        exit(1)
-      end
-
-      keylen = result.length
-      jot "Found recurring key pattern: #{result}"
-      jot "Detected key length: #{keylen}"
-
+    def create_candidate_map(buf,keylen)
       candidate_map ={}
-      (0..(keylen-1)).each do |key_byte|
+      (0..(keylen-1)).each do |key_byte_pos|
 
-        nth_stream = (key_byte).step(buf.bytes.length() -1, keylen).map{|i| buf.bytes[i]}
+        nth_stream = (key_byte_pos).step(buf.bytes.length() -1, keylen).map{|i| buf.bytes[i]}
         smart_buf = CryptBuffer.new(nth_stream)
 
-        candidate_map[key_byte]=[]
-        1.upto(255).each do |possible_key_value|
-          if smart_buf.xor_all_with(possible_key_value).bytes.all?{|byte| acceptable_char?(byte) }
-            jot("YES: " + smart_buf.xor_all_with(possible_key_value).to_s,debug: true)
-            candidate_map[key_byte] << possible_key_value
+        candidate_map[key_byte_pos]=[]
+        1.upto(255).each do |guess|
+          if smart_buf.xor_all_with(guess).bytes.all?{|byte| acceptable_char?(byte) }
+            jot("YES: " + smart_buf.xor_all_with(guess).to_s,debug: true)
+            candidate_map[key_byte_pos] << guess
           else
             # the current byte does not create a plain ascii result ( thus skip it )
-            #jot  "NO: " + smart_buf.xor_all_with(possible_key_value).to_s
+            #jot  "NO: " + smart_buf.xor_all_with(guess).to_s
           end
         end
       end
+      
+      candidate_map
+    end
+    
+    def analyze(input)
+      buf = CryptBuffer.from_hex(input)
 
+      # Example: "100100" || nil
+      key_pattern = find_pattern(buf)
+      if key_pattern.nil?
+        $stderr.puts "failed to find keylength by ASCII-8-Bit anlysis"
+        exit(1)
+      end
+      keylen = key_pattern.length
+      jot "Found recurring key pattern: #{key_pattern}"
+      jot "Detected key length: #{keylen}"
+
+      
+      candidate_map = create_candidate_map(buf,keylen)
+      jot "Amount of candidate keys: #{candidate_map.map{|k,v| v.length}.reduce(&:*)}. Starting Permutation (RAM intensive)"
+      
+      # split the candidate map into head and*tail to create the prduct of all combinations
       head,*tail = candidate_map.map{|k,v|v}
-
-      jot "Amount of candidate keys: #{candidate_map.map{|k,v| v.length}.reduce(&:*)}. Starting Permutation (RAM intensive)"  
-
       combinations = head.product(*tail)
-      # make sure all permutations are still according to the bytes per position map
-      #x = combinations.select do |arr|
-      #  #binding.pry
-      #  arr.map.with_index{|e,i| candidate_map[i].include?(e)  }.all?{|e| e ==true}
-      #end
-      if ENV["SEMI_AUTO_ANALYSIS"] && ENV["DEBUG_ANALYSIS"]
-        print_candidate_encryptions(candidate_map,keylen,buf)
+
+      if ENV["DEBUG_ANALYSIS"]
+        ensure_consistent_result!(combinations,candidate_map)
+        print_candidate_decryptions(candidate_map,keylen,buf)
       end
       
-      results = KeySearch::Filter::AsciiPlain.new(combinations,buf).filter
+      results = Analyzers::Utils::KeyFilter::AsciiPlain.new(combinations,buf).filter
       report_result(results,buf)
+    end
+
+    def ensure_consistent_result!(combinations,condidate_map)
+      # NOTE Consistency check ( enable if you dont trust the generation anymore )
+      # make sure all permutations are still according to the bytes per position map
+      combinations.select do |arr|
+        raise "Inconsistent key candidate combinations" unless arr.map.with_index{|e,i| candidate_map[i].include?(e)  }.all?{|e| e ==true}
+      end      
     end
 
     def report_result(results,buf)
        unless results.empty?
-        jot "[Success] Found valid result(s)"
+        jot "[Success] Found valid result(s):"
         results.each do |r|
-          print_delimiter_line
           jot r.xor(buf).str
-          print_delimiter_line
         end
       end
     end
     
-    def print_candidate_encryptions(candidate_map,keylen,buf)
+    def print_candidate_decryptions(candidate_map,keylen,buf)
       # printout for debugging. (Manual analysis of the characters)
       print "======= Decryption result of first #{keylen} bytes with all candidate keys =======\n" 
       (0..keylen-1).each do|i|
@@ -109,12 +137,6 @@ module Analyzers
     
   end
 end
-
-=begin
-NOTE: we may at digram and trigram support?
-#trigram="the "
-#x = CryptBuffer.new(trigram)
-=end
 
 
 

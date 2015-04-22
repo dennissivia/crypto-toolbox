@@ -22,6 +22,28 @@ This gem offer classes to make cryptographic operations as easy as possible.
 It should be a helpfull toolkit for anyone who is learning cryptographic basics or trying to apply
 crypto analysis to weak and insecure ciphers or encryption modes.
 
+# Content ( Whats in the toolbox )
+
+## Utils
+* **CryptBuffer**
+This really is the workhorse of the entire gem. Most of the higher level parts rely on it.
+It should also be the most frequently used Class when trying to do hands on crypto anlysis and byte manipulation
+
+
+## Analyzers
+* There is a **VigenereXor analyzer** that breaks ciphers with repeated short keys using bit pattern detection and english language
+dictionary analysis
+* There is a **PaddingOracle analyzer** that has sample implementations for a tcp and a http oracle.
+*
+
+Work in Progress
+* I am currently working on the **multi-time-pad analyzer** to make a full automatic analysis. Currently manual intervention is required
+
+
+## Ciphers
+* Caesar Cipher PoC implementation
+* Rot13 PoC implementation
+
 
 # Installation
 
