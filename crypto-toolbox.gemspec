@@ -13,8 +13,8 @@ EOF
   s.license     = 'GPLv3'
   s.required_ruby_version = '>= 2.0'
 
-  s.executables << 'break-vigenere-xor'
-
+  s.executables << "break-vigenere-xor"
+  s.executables << "break-padding-oracle"
 
   s.add_dependency 'aes', '~> 0.5'
   s.add_dependency 'ffi-hunspell', '~> 0.3'

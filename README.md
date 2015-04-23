@@ -33,8 +33,17 @@ It should also be the most frequently used Class when trying to do hands on cryp
 ## Analyzers
 * There is a **VigenereXor analyzer** that breaks ciphers with repeated short keys using bit pattern detection and english language
 dictionary analysis
+
+Sample execution
+```ruby
+DEBUG_ANALYSIS=1 break-vigenere-xor <MyCipherText>
+```
+
 * There is a **PaddingOracle analyzer** that has sample implementations for a tcp and a http oracle.
-*
+Sample execution
+```ruby
+DEBUG_ANALYSIS=1 break-padding-oracle <MyCipherText>
+```
 
 Work in Progress
 * I am currently working on the **multi-time-pad analyzer** to make a full automatic analysis. Currently manual intervention is required
