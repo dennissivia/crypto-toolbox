@@ -44,6 +44,13 @@ class CryptBuffer
     CryptBufferInputConverter.new.from_hex(input)
   end
 
+  def nth_bytes(n,offset: 0)
+    return CryptBuffer([]) if n.nil? || n < 1
+
+    CryptBuffer((0+offset).step(length,n).map{|i| bytes[i] }.compact)
+  end
+  
+
   # Returns an array of the nth least sigificant by bit of each byte
   def nth_bits(n)
     raise OutOfRangeError if n < 0

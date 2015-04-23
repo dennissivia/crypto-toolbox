@@ -17,7 +17,7 @@ All Ciphers provides in this gem are for educational and training purpose only. 
 We dont use SecureRandom or any other secure random sources, since we only need low-quality random data and reproducability.
 
 
-## That this gem is
+## What this gem is
 This gem offer classes to make cryptographic operations as easy as possible.
 It should be a helpfull toolkit for anyone who is learning cryptographic basics or trying to apply
 crypto analysis to weak and insecure ciphers or encryption modes.

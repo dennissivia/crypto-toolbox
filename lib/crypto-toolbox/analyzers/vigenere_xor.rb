@@ -1,3 +1,4 @@
+require 'crypto-toolbox/analyzers/utils/key_candidate_map.rb'
 
 =begin
 # References:
@@ -24,22 +25,8 @@ module Analyzers
     #
     # 4) Do an English language Analysis of the possible result by using
     # the error rate of the candidate plaintext using hunspell
-    #
-
     
-    def jot(message, debug: false)
-      if debug == false || ENV["DEBUG_ANALYSIS"]
-        puts message
-      end
-    end
-    def print_delimiter_line
-      puts "=====================================================================" 
-    end
-
-    # Checks if a given byte maps to a reasonable english language character
-    def acceptable_char?(byte)
-      (byte > 31 && byte < 123) && (byte != 60 && byte !=64)
-    end
+    include ::Utils::Reporting::Console
     
     def find_pattern(buf)
       bitstring = buf.nth_bits(7).join("")
@@ -53,44 +40,20 @@ module Analyzers
         end
       end.compact.first
     end
-
-    def create_candidate_map(buf,keylen)
-      candidate_map ={}
-      (0..(keylen-1)).each do |key_byte_pos|
-
-        nth_stream = (key_byte_pos).step(buf.bytes.length() -1, keylen).map{|i| buf.bytes[i]}
-        smart_buf = CryptBuffer.new(nth_stream)
-
-        candidate_map[key_byte_pos]=[]
-        1.upto(255).each do |guess|
-          if smart_buf.xor_all_with(guess).bytes.all?{|byte| acceptable_char?(byte) }
-            jot("YES: " + smart_buf.xor_all_with(guess).to_s,debug: true)
-            candidate_map[key_byte_pos] << guess
-          else
-            # the current byte does not create a plain ascii result ( thus skip it )
-            #jot  "NO: " + smart_buf.xor_all_with(guess).to_s
-          end
-        end
-      end
-      
-      candidate_map
-    end
     
     def analyze(input)
       buf = CryptBuffer.from_hex(input)
-
+## === Should this be extracted into a dedicated class ?
       # Example: "100100" || nil
       key_pattern = find_pattern(buf)
-      if key_pattern.nil?
-        $stderr.puts "failed to find keylength by ASCII-8-Bit anlysis"
-        exit(1)
-      end
-      keylen = key_pattern.length
-      jot "Found recurring key pattern: #{key_pattern}"
-      jot "Detected key length: #{keylen}"
 
+      assert_key_pattern!(key_pattern)
       
-      candidate_map = create_candidate_map(buf,keylen)
+      report_pattern_info(key_pattern)
+
+##====
+      
+      candidate_map = Analyzers::Utils::KeyCandidateMap.create(buf,key_pattern.length)
       jot "Amount of candidate keys: #{candidate_map.map{|k,v| v.length}.reduce(&:*)}. Starting Permutation (RAM intensive)"
       
       # split the candidate map into head and*tail to create the prduct of all combinations
@@ -99,11 +62,18 @@ module Analyzers
 
       if ENV["DEBUG_ANALYSIS"]
         ensure_consistent_result!(combinations,candidate_map)
-        print_candidate_decryptions(candidate_map,keylen,buf)
+        print_candidate_decryptions(candidate_map,key_pattern.length,buf)
       end
       
       results = Analyzers::Utils::KeyFilter::AsciiPlain.new(combinations,buf).filter
       report_result(results,buf)
+    end
+    private
+    def assert_key_pattern!(key_pattern)
+      if key_pattern.nil?
+        $stderr.puts "failed to find keylength by ASCII-8-Bit anlysis"
+        exit(1)
+      end
     end
 
     def ensure_consistent_result!(combinations,condidate_map)
@@ -113,6 +83,12 @@ module Analyzers
         raise "Inconsistent key candidate combinations" unless arr.map.with_index{|e,i| candidate_map[i].include?(e)  }.all?{|e| e ==true}
       end      
     end
+
+    def report_pattern_info(key_pattern)
+      jot "Found recurring key pattern: #{key_pattern}"
+      jot "Detected key length: #{key_pattern.length}"
+    end
+      
 
     def report_result(results,buf)
        unless results.empty?

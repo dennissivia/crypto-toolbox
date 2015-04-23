@@ -1,6 +1,7 @@
+require 'crypto-toolbox/utils/reporting/console.rb'
+
 require 'crypto-toolbox/crypt_buffer_input_converter.rb'
 require 'crypto-toolbox/crypt_buffer.rb'
-
 
 require 'crypto-toolbox/analyzers/utils/key_filter.rb'
 require 'crypto-toolbox/analyzers/utils/spell_checker.rb'
