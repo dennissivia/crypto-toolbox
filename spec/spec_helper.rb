@@ -2,6 +2,9 @@ require 'rspec'
 require 'crypto-toolbox'
 require 'pry'
 
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
+
 require 'coveralls'
 Coveralls.wear!
 

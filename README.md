@@ -35,13 +35,13 @@ It should also be the most frequently used Class when trying to do hands on cryp
 dictionary analysis
 
 Sample execution
-```ruby
+```
 DEBUG_ANALYSIS=1 break-vigenere-xor <MyCipherText>
 ```
 
 * There is a **PaddingOracle analyzer** that has sample implementations for a tcp and a http oracle.
 Sample execution
-```ruby
+```
 DEBUG_ANALYSIS=1 break-padding-oracle <MyCipherText>
 ```
 
