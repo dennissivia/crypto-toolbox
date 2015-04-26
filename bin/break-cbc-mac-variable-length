@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require 'crypto-toolbox'
+
+if ARGV[0].nil?
+  $stderr.puts "Missing Argument: Message-to-tag (ascii string)"
+else
+  message = ARGV[0]
+  
+  Analyzers::CbcMac::VariableLength::Analyzer.new.analyze(message)
+end
