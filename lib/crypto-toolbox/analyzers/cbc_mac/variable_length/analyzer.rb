@@ -23,33 +23,42 @@ module Analyzers
         def analyze(target_message)
           @oracle.connect
 
-          #target_msg = "I, the server, hereby agree that I will pay $100 to this student"
+          # split the target message into chunks of size N (e.g. 32)
           target_bufs = CryptBuffer(target_message).chunks_of(32)
 
-          # add to_crypt_buffer to String!
-          target_tag1 = CryptBuffer(@oracle.mac(target_bufs[0].chars,target_bufs[0].length)) #.split("").map{|i| i.bytes.first }
+          # receive the valid mac for the first chunk of the target message
+          tag1 = CryptBuffer(@oracle.mac(target_bufs[0]))
 
-          # NOTE  t''  = m || [ (m_1' + t ) ||m_2'||...||m_x']
-          m2_blocks = target_bufs[1].chunks_of(16)
-          msg2 = CryptBuffer((m2_blocks[0].xor(target_tag1)).bytes + m2_blocks[1].bytes)
+          attack_message = assemble_malicious_message(target_bufs,tag1)
+          forged_tag = @oracle.mac(attack_message)
 
-          # @oracle.tag_for(msg2.chars,msg2.length)
-          forge_tag = @oracle.mac(msg2.chars,msg2.length)
+          ret = @oracle.verify(target_message, forged_tag)
 
-          # @oracle.verify(target_msg.chars, target_msg.length, forge_tag)
-          ret = @oracle.verify(target_message.chars, target_message.length, forge_tag)
-
+          report_result(ret,forged_tag)
           
-          if forge_successfull?(ret)
-            puts "result is: #{CryptBuffer(forge_tag).hex}"
-            puts "Message verified successfully!"
-          else
-            puts "Message verification failed."
-          end
-          @oracle.disconnect
+          @oracle.disconnect          
         end
         
         private
+          # Create a message that consists of
+          # 1) the first n byte of the second message xored with tag t from the first message
+          # 2) the remaining blocks of the second message
+          # short:  t''  = (m'_0  xor t ) ||m'_1 ||...||m'_n]          
+        def assemble_malicious_message(target_bufs,tag1)
+
+          # split the second chunk into blocks of the size of the tag
+          m2_blocks = target_bufs[1].chunks_of(tag1.length)
+
+          CryptBuffer((m2_blocks[0].xor(tag1)).bytes + m2_blocks[1].bytes)
+        end
+        
+        def report_result(ret,tag)
+          if forge_successfull?(ret)
+            puts "[Success] Resulting tag is: #{CryptBuffer(tag).pretty_hexstring}"
+          else
+            puts "[Failure] Message verification failed."
+          end
+        end
         
         def forge_successfull?(retval)
           retval == 1

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    crypto-toolbox (0.1.13)
+    crypto-toolbox (0.1.14)
       aes (~> 0.5)
       ffi-hunspell (~> 0.3)
 
@@ -56,7 +56,7 @@ GEM
       rb-inotify (>= 0.9)
     lumberjack (1.0.9)
     method_source (0.8.2)
-    mime-types (2.4.3)
+    mime-types (2.5)
     nenv (0.2.0)
     netrc (0.10.3)
     notiffany (0.0.6)
@@ -87,6 +87,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)
     rspec-support (3.2.2)
+    ruby-prof (0.15.8)
     shellany (0.0.1)
     simplecov (0.10.0)
       docile (~> 1.1.0)
@@ -99,7 +100,7 @@ GEM
     thor (0.19.1)
     timers (4.0.1)
       hitimes
-    tins (1.4.2)
+    tins (1.5.1)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.1)
@@ -119,4 +120,5 @@ DEPENDENCIES
   pry
   rake
   rspec
+  ruby-prof
   version

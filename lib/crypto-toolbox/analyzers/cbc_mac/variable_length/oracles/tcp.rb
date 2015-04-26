@@ -23,20 +23,20 @@ module Analyzers
             @mac_socket.close    if @mac_socket
           end
 
-          def mac(message,len)
+          def mac(message)
             connect unless @mac_socket
 
-            packet = ([message.length] + message + [0]).map(&:chr).join("")
+            packet = ([message.length] + message.bytes + [0]).map(&:chr).join("")
 
             @mac_socket.write(packet)
             @mac_socket.read(16)
           end
 
-          def verify(message,len,tag)
+          def verify(message,tag)
             connect unless @verify_socket
 
             # Message-length + message-chars + tag-chars + 0
-            packet = ([message.length] + message + tag.split("") + [0]).map(&:chr).join("")
+            packet = ([message.length] + message.bytes + tag.split("") + [0]).map(&:chr).join("")
 
             @verify_socket.write(packet)
             @verify_socket.read(2).to_i

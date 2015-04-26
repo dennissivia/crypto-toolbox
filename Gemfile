@@ -5,6 +5,7 @@ group :development,:test do
   gem 'version'
   gem 'byebug'
   gem 'benchmark-ips'
+  gem 'ruby-prof'
 end
 
 group :test do
