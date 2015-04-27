@@ -29,3 +29,18 @@ module CryptBufferConcern
     end
   end
 end
+
+module CryptBufferConcern
+  module TypeExtension
+    def to_crypt_buffer
+      CryptBuffer(self)
+    end
+  end
+end
+
+String.send(:include, CryptBufferConcern::TypeExtension)
+Fixnum.send(:include, CryptBufferConcern::TypeExtension)
+ Array.send(:include, CryptBufferConcern::TypeExtension)
+
+
+
