@@ -2,7 +2,9 @@ require 'aes'
 require 'openssl'
 require 'forwardable'
 
+
 require 'crypto-toolbox/crypt_buffer/concerns/arithmetic.rb'
+require 'crypto-toolbox/crypt_buffer/concerns/array.rb'
 require 'crypto-toolbox/crypt_buffer/concerns/byte_expander.rb'
 require 'crypto-toolbox/crypt_buffer/concerns/comparable.rb'
 require 'crypto-toolbox/crypt_buffer/concerns/convertable.rb'
@@ -13,8 +15,21 @@ require 'crypto-toolbox/crypt_buffer/concerns/xor.rb'
 
 class CryptBuffer
   class OutOfRangeError < RuntimeError; end
+  attr_accessor :bytes
+  alias_method :b, :bytes
+
   
+  include Enumerable
+  extend Forwardable
+  def_delegators :@bytes,:empty?,:include?, :length, :each, :^, :|, :&
+
+  # NOTE
+  # we need to include all the extensions after the regular delegate
+  # otherwise we are not able to overwrite methods like first/last
+  # which would result in the inability of casting the result to a
+  # new cryptbuffer instance, thus leaving the return value an array
   include CryptBufferConcern::Arithmetic
+  include CryptBufferConcern::Array
   include CryptBufferConcern::ByteExpander
   include CryptBufferConcern::Convertable
   include CryptBufferConcern::Comparable
@@ -23,14 +38,6 @@ class CryptBuffer
   include CryptBufferConcern::Random
   include CryptBufferConcern::Xor
 
-  
-  include Enumerable
-  extend Forwardable
-  def_delegators :@bytes, :[], :empty?,:include?, :each, :length
-
-  
-  attr_accessor :bytes
-  alias_method :b, :bytes
 
   
   def initialize(byte_array)

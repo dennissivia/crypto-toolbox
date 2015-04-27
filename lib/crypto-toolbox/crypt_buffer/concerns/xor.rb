@@ -2,12 +2,12 @@ module CryptBufferConcern
   module Xor
     def xor_at(input,pos)
       return self if input.nil? || (pos.abs > length)
-      
-      case input
-      when Array
+
+      case input.respond_to?(:to_ary)
+      when true
         # map our current data to xor all inputs with the given bytepos.
         # all other bytes are kept as they were
-        tmp = bytes.map.with_index{|b,i| i == pos ? xor_multiple(b,input) : b }
+        tmp = bytes.map.with_index{|b,i| i == pos ? xor_multiple(b,input.to_ary) : b }
         CryptBuffer(tmp)
       else
         tmp = bytes

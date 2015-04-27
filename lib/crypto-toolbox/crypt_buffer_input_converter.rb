@@ -27,6 +27,8 @@ class CryptBufferInputConverter
       input.b
     when Fixnum
       int2bytes(input)
+    when NilClass
+      []
     else
       raise "Unsupported input: #{input.inspect} of class #{input.class}"
     end

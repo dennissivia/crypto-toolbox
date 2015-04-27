@@ -20,7 +20,7 @@ module CryptBufferConcern
       def generate_bytes(n,seed)
         prg = ::Random.new(seed)
 
-        Array.new(n.to_i) { prg.rand 256 }
+        ::Array.new(n.to_i) { prg.rand 256 }
       end
     end
 
