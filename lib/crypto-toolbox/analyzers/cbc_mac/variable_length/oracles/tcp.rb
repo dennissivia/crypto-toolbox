@@ -25,8 +25,7 @@ module Analyzers
 
           def mac(message)
             connect unless @mac_socket
-
-            packet = ([message.length] + message.bytes + [0]).map(&:chr).join("")
+            packet = ( message.length.to_crypt_buffer + message + [0] ).chars.join("")
 
             @mac_socket.write(packet)
             @mac_socket.read(16)
@@ -36,8 +35,9 @@ module Analyzers
             connect unless @verify_socket
 
             # Message-length + message-chars + tag-chars + 0
-            packet = ([message.length] + message.bytes + tag.split("") + [0]).map(&:chr).join("")
-
+            # NOTE: check why chars instead of bytes.map does not work here
+            packet = (message.length.to_crypt_buffer + message + tag.split("") + [0] ).bytes.map(&:chr).join("")
+            
             @verify_socket.write(packet)
             @verify_socket.read(2).to_i
           end

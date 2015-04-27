@@ -10,6 +10,10 @@ module CryptBufferConcern
       CryptBuffer(bytes.shift(n))
     end
 
+    def unshift(anything)
+      CryptBuffer(bytes.unshift(anything))
+    end
+
     def first(n = 1 )
       CryptBuffer(bytes.first(n))
     end

@@ -92,6 +92,13 @@ describe CryptBuffer  do
         }.to change{mybuf.length}.from(5).to(2)
       end
     end
+
+    context "#unshift" do
+      it "returns a CryptBuffer including the new element" do
+        expect(buf.unshift(7)).to eq(CryptBuffer([7,1,2,3,4,5]))
+      end
+    end
+
     
     context "first" do
       it "returns a buffer with the first element" do
