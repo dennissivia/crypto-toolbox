@@ -22,7 +22,7 @@ This gem offer classes to make cryptographic operations as easy as possible.
 It should be a helpfull toolkit for anyone who is learning cryptographic basics or trying to apply
 crypto analysis to weak and insecure ciphers or encryption modes.
 
-# Content ( Whats in the toolbox )
+# Toolbox content
 
 ## Utils
 * **CryptBuffer**
@@ -31,19 +31,11 @@ It should also be the most frequently used Class when trying to do hands on cryp
 
 
 ## Analyzers
-* There is a **VigenereXor analyzer** that breaks ciphers with repeated short keys using bit pattern detection and english language
-dictionary analysis
+Existing analyzers. For sample executions [Usage](#usage-examples)
 
-Sample execution
-```
-DEBUG_ANALYSIS=1 break-vigenere-xor <MyCipherText>
-```
-
+* There is a **VigenereXor analyzer** that breaks ciphers with repeated short keys using bit pattern detection and english language dictionary analysis
 * There is a **PaddingOracle analyzer** that has sample implementations for a tcp and a http oracle.
-Sample execution
-```
-DEBUG_ANALYSIS=1 break-padding-oracle <MyCipherText>
-```
+* There is a ** CBC-MAC with variable length analyzer** that forged CBC-MAC tags for a given message
 
 Work in Progress
 * I am currently working on the **multi-time-pad analyzer** to make a full automatic analysis. Currently manual intervention is required
@@ -53,8 +45,9 @@ Work in Progress
 * Caesar Cipher PoC implementation
 * Rot13 PoC implementation
 
+# Getting started
 
-# Installation
+## Installation
 
 Bundler / Gemfile
 
@@ -65,10 +58,28 @@ Regular Gem
 `gem install 'crypto-toolbox'`
 
 
+## Usage Examples
 
-# Usage Examples
+### Crypto analyzers
 
-## Encrypt a message with a random key
+breaking vigenere cipher xor derivation
+```
+DEBUG_ANALYSIS=1 break-vigenere-xor <MyCipherText>
+```
+
+attack cbc-mode with a padding oracle attack
+```
+DEBUG_ANALYSIS=1 break-padding-oracle <MyCipherText>
+```
+
+breaking CBC-MAC with variable length 
+```
+break-cbc-mac-variable-length 'This message offers the receiver lots of money will be verified!'
+```
+
+
+### CryptBuffer examples
+#### Encrypt a message with a random key
 
 ```ruby
 msg = "my super secret message, that no one should ever know"
@@ -80,13 +91,15 @@ key.xor(msg).str
 ```
 
 
+
 # Short API Walkthrough
+This is a short walkthrough. For a full api documentation see: [RubyDoc API-Docs](http://www.rubydoc.info/gems/crypto-toolbox/CryptBuffer)
 
 
-# CryptBuffer 
+## CryptBuffer 
 The CryptBuffer is made to make Xor operations on strings, bytes, hex-strings easy.
 
-## Input Conversion
+### Input Conversion
 
 ```ruby
 # Strings beginning with 0x are handles has hex strings
@@ -105,7 +118,6 @@ CryptBuffer("my example String")
 CryptBuffer("FFeecc")
 => #<CryptBuffer:0x0000000091ea60 @bytes=[70, 70, 101, 101, 99, 99]>
 # AND not 255, 238, 204
-
 
 # Numers are treated as bytes but: numbers with a leading 0x are treated has hex bytes
 CryptBuffer(64)
@@ -130,9 +142,9 @@ CryptBuffer.from_hex("0F").hex
 ```
 
 
-## XORing
+### XORing
 
-### CryptBuffer#xor
+#### CryptBuffer#xor
 Xoring two CryptBuffers
 ```ruby
 key = CryptBuffer("my-super-secret-key")
@@ -159,7 +171,7 @@ CryptBuffer(0x90).xor(1).xor("0xff").str
  ```
 
 
-### CryptBuffer#xor_at(val,pos)
+#### CryptBuffer#xor_at(val,pos)
 ```ruby
 buf = CryptBuffer([1,1,2,2,3,3]) }
 
@@ -173,7 +185,7 @@ buf.xor_at(200,-1).bytes
 
 ```
 
-### CryptBuffer#xor_all_with(byte)
+#### CryptBuffer#xor_all_with(byte)
 ```ruby
 buf = CryptBuffer([1,1,1]) }
 
@@ -182,7 +194,7 @@ buf.xor_all_with(200).bytes
 ```
 
 
-### CryptBuffer#xor_space
+#### CryptBuffer#xor_space
 Simple shorthand for
 
 ```ruby
@@ -191,7 +203,7 @@ CryptBuffer(input).xor(0x20)
 
 
 
-## Method Chaining
+### Method Chaining
 ```ruby
 CryptBuffer("secret-key").xor("my message").xor_all_with(0x20).xor("secret-key").xor_all_with(0x20).str
 => "my message"
@@ -212,7 +224,7 @@ CryptBuffer("0x0f").add(15,mod:20).bytes  == 10
 => true
 ```
 
-## nth_bits(n) | 0 <= n <= 7
+### nth_bits(n) | 0 <= n <= 7
 Returns the nths bits of each byte (starting with the least significant bit):
 
 ```ruby
@@ -224,9 +236,11 @@ buf = CryptBuffer("0xFECDE993").bits
 buf = CryptBuffer("0xFECDE993").nth_bits(2)
  => [1, 1, 0, 0]
 ```
+ 
+### nth_bytes(pos)
 
 
-## Output conversion
+### Output conversion
 
 ```ruby
 buf = CryptBuffer("0xfecc993")
@@ -257,7 +271,7 @@ b => bytes
 c => chars
 ```
 
-## Debug output 
+### Debug output 
 pp method:
 ```ruby
 CryptBuffer("0xfecc993").pp
