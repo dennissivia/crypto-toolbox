@@ -22,9 +22,6 @@ describe CryptBuffer do
     it "can be compared with a hex int" do
       expect(short == 0x1).to be_truthy
     end
-    it "can be compared with a multi digit hex int" do
-      expect(mid == 0xaABb).to be_truthy
-    end
   end
 end
 

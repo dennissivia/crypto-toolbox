@@ -106,9 +106,9 @@ The CryptBuffer is made to make Xor operations on strings, bytes, hex-strings ea
 CryptBuffer("0xFFeecc")
 => #<CryptBuffer:0x000000010d8e18 @bytes=[255, 238, 204]>
 
-# Hex Integers are supported
-CryptBuffer(0xFFeecc)
-=> #<CryptBuffer:0x000000010d8e18 @bytes=[255, 238, 204]>
+# Hex Integers treated as regular integers
+CryptBuffer(0xFF)
+=> #<CryptBuffer:0x000000010d8e18 @bytes=[255]>
 
 # regular strings are supported
 CryptBuffer("my example String")

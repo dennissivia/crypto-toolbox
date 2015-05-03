@@ -35,14 +35,7 @@ class CryptBufferInputConverter
   end
 
   def int2bytes(input)
-    # integers as strings dont have a 0x prefix
-    if input.to_s(16).match(/^[0-9a-fA-F]+$/)
-      # assume 0x prefixed integer
-      hex2bytes(normalize_hex(input.to_s(16)))
-    else
-      # regular number
-      [input].pack('C*').bytes
-    end
+    [input].pack('C*').bytes
   end
   
   def hex2bytes(hexstr)

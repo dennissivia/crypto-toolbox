@@ -20,9 +20,6 @@ describe CryptBufferInputConverter do
         expect(CryptBuffer(input).bytes).to eq([value])
       end
     end
-    it "supports multi digit hex integers" do
-      expect(CryptBuffer(0xaabb).bytes).to eq([170,187])
-    end
   end
 end
 
