@@ -1,5 +1,11 @@
 module CryptBufferConcern
   module Xor
+
+
+    def ^(other)
+      xor(other)
+    end
+    
     def xor_at(input,pos)
       return self if input.nil? || (pos.abs > length)
 

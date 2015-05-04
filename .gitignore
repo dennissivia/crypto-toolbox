@@ -40,3 +40,7 @@ build/
 .rvmrc
 
 coverage/
+
+prototypes/multi_time_pad-ideas.rb
+prototypes/multi_time_pad.rb.orig
+

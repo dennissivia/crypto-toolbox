@@ -170,6 +170,13 @@ CryptBuffer(0x90).xor(1).xor("0xff").str
  => "n" 
  ```
 
+The xor operation can also be done via the ^-operator
+The operator also does a conversion of the input
+
+
+```ruby
+(Cryptbuffer("message").xor("yourkey")) == (CryptBuffer("message") ^ "yourkey)
+```
 
 #### CryptBuffer#xor_at(val,pos)
 ```ruby

@@ -21,7 +21,7 @@ class CryptBuffer
   
   include Enumerable
   extend Forwardable
-  def_delegators :@bytes,:empty?,:include?, :length, :each, :^, :|, :&
+  def_delegators :@bytes,:empty?,:include?, :length, :each, :|, :&
 
   # NOTE
   # we need to include all the extensions after the regular delegate

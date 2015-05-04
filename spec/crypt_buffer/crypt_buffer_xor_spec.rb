@@ -16,7 +16,7 @@ describe CryptBuffer do
       expect(short.xor(255)).to eq(254)
     end
     
-    context "conversion" do
+    context "input conversion" do
       it "accepts an integer" do
         expect(short.xor(255)).to eq(254)
       end
@@ -31,6 +31,21 @@ describe CryptBuffer do
       end
       it "accepts a string" do
         expect(long.xor("   a     ").str).to eq("tHEAhOUSE")
+      end
+      
+      context "^ shorthand" do
+        it "accepts a hex-integer" do
+          expect(short ^ 0xFF).to eq(254)
+        end
+        it "accepts a string" do
+          expect((short ^ " ").str).to eq("!")
+        end
+        it "accepts a hex-string" do
+          expect(short ^"0xFF").to eq(254)
+        end
+        it "accepts a string" do
+          expect((long ^ "   a     ").str).to eq("tHEAhOUSE")
+        end
       end
     end
     context ",expand argument" do
