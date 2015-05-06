@@ -13,7 +13,8 @@ module CryptBufferConcern
       when true
         # map our current data to xor all inputs with the given bytepos.
         # all other bytes are kept as they were
-        tmp = bytes.map.with_index{|b,i| i == pos ? xor_multiple(b,input.to_ary) : b }
+        abs_pos = normalize_pos(pos)
+        tmp = bytes.map.with_index{|b,i| i == abs_pos ? xor_multiple(b,input.to_ary) : b }
         CryptBuffer(tmp)
       else
         tmp = bytes
@@ -50,6 +51,17 @@ module CryptBufferConcern
       x = hex2bytes(hex)
       xor_bytes(x)
     end
+
+    private
+    def xor_multiple(byte,bytes)
+
+      ([byte] + bytes).reduce(:^)
+    end
+    def normalize_pos(pos)
+      (pos < 0) ? (length() + pos ) : pos
+    end
+
+    
   end
   
 end

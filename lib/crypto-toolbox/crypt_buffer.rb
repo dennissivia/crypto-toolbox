@@ -69,11 +69,6 @@ class CryptBuffer
   def chunks_of(n)
     self.bytes.each_slice(n).map{|chunk| CryptBuffer(chunk) }
   end
-  
-  private
-  def xor_multiple(byte,bytes)
-    ([byte] + bytes).reduce(:^)
-  end
 end
 
 

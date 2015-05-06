@@ -26,16 +26,16 @@ module Analyzers
         end
         
         def valid_padding?(input,block_amount)
-          ret = send_msg(input, block_amount)
-          !ret.zero?
+          ! send_msg(input, block_amount).zero?
         end
 
         private
         def send_msg(input,block_amount)
           connect unless connected?
 
-          msg = ([block_amount] + input + [0]).map(&:chr)
-          @socket.write(msg.join(""))
+          msg = ([block_amount] + input + [0]).map(&:chr).join
+          sleep 0.01
+          @socket.write(msg)
           @socket.read(2).to_i
         end
         def connected?
@@ -46,6 +46,3 @@ module Analyzers
     end
   end
 end
-
-
-

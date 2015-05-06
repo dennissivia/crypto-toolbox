@@ -92,6 +92,9 @@ describe CryptBuffer do
       it "handles nil" do
         expect(buf.xor_at(nil,0).bytes).to eq([1,1,2,2,3,3])
       end
+      it "works with negative indices" do
+        expect(buf.xor_at([5,15],-1).bytes).to eq([1,1,2,2,3,9])
+      end
     end
   end
 
