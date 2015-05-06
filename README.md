@@ -175,7 +175,7 @@ The operator also does a conversion of the input
 
 
 ```ruby
-(Cryptbuffer("message").xor("yourkey")) == (CryptBuffer("message") ^ "yourkey)
+(Cryptbuffer("message").xor("yourkey")) == (CryptBuffer("message") ^ "yourkey")
 ```
 
 #### CryptBuffer#xor_at(val,pos)

@@ -4,6 +4,9 @@ require 'pp'
 
 class CryptoAnalyzer
   class MultiTimePad
+    def initialize
+      @spellcheck =  ::Analyzers::Utils::SpellChecker.new("en_GB")
+    end
     def run(cipher_texts)
       keylen=CryptBuffer.from_hex(cipher_texts.first).length
       puts "keylen : #{keylen}"
@@ -15,11 +18,27 @@ class CryptoAnalyzer
       xored_ctexts = combinations.map{|l,r| CryptBuffer.from_hex(l).xor(CryptBuffer.from_hex(r)) }
       samples      = xored_ctexts.map{|m| m.xor_space.chars.map{|char| char.match(/[a-zA-Z]/).nil? ? nil : char } }
 
-      guess = "When should we meet to do this?"
-      tmp   = test_plain(xored_ctexts,"When should we meet to do this?")
-      score = spell_score_for(tmp)
-      words = spell_words_for(tmp)
+      
+      while
+        sleep 0.2
 
+        ref_score = guess(xored_ctexts,"").first
+          
+        ngrams = ["The","the","They","When","I am"]
+
+
+        spell  = ::Analyzers::Utils::SpellChecker.new("en_GB")
+=begin
+NOTE score based analysis ( total or max ) does not work.
+=end
+         
+        input = "When"
+        score,words,data = guess(xored_ctexts,input)
+        search_in(data)
+        
+        binding.pry        
+
+      end
       result_candidates = words.map{|v| v.join(" ") }.select{|c| c.length == keylen }
 
       unless result_candidates.empty?
@@ -28,6 +47,22 @@ class CryptoAnalyzer
       result_candidates
     end
 
+    def search_in(strings)
+      strings.each do |string|
+         string.chars.each_with_index do |char,pos|  
+           sub = string[0,pos]    
+           puts "<#{sub}> in '#{string}'" if sub.length > 1 && @spellcheck.human_phrase?(sub)    
+         end
+      end
+    end
+
+
+    def guess(ctexts,input)
+      data   = test_plain(ctexts,input)
+      score = spell_score_for(data)
+      words = spell_words_for(data)
+      [score,words,data]
+    end
     def ascii_whitelist
       (32..127).to_a - ascii_blacklist
     end
@@ -40,17 +75,15 @@ class CryptoAnalyzer
     end
     
     def test_plain(all,plain)
-      all.map{|combi| combi.xor(plain + (" "*31)).bytes.map{|byte| ascii_lingual?(byte) ? byte : "_".bytes.first } }.map{|e| CryptBuffer(e).str}
+      all.map{|combi| combi.xor(plain).bytes.map{|byte| ascii_lingual?(byte) ? byte : " ".bytes.first } }.map{|e| CryptBuffer(e).str}
     end
     
     def spell_score_for(texts)
-      spell = SpellChecker.new("en_GB")
-      texts.map{|e| spell.known_words(e).count}.reduce(&:+)
+      texts.map{|e| @spellcheck.known_words(e).count}.reduce(&:+)
     end
     
     def spell_words_for(texts)
-      spell = SpellChecker.new("en_GB")
-      texts.map{|e| spell.known_words(e)}.map{|arr| arr.select{|e| e =~ /[a-zA-Z]/}}
+      texts.map{|e| @spellcheck.known_words(e)}.map{|arr| arr.select{|e| e =~ /[a-zA-Z]/}}
     end
 
 

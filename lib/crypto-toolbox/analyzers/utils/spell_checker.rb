@@ -28,6 +28,14 @@ Some statistics about it:
         words = str.split(" ").select{|w| @dict.check?(w) }
       end
 
+      def human_word?(str)
+        @dict.check?(str)
+      end
+
+      def human_phrase?(string)
+        string.split(" ").all?{|part| human_word?(part)}
+      end
+
       def suggest(str)
         @dict.suggest(str)
       end
