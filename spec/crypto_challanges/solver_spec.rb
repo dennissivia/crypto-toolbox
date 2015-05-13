@@ -62,5 +62,15 @@ RSpec.describe CryptoChallanges::Solver do
       expect(subject.solve7(input,key)).to include(plain)
     end
   end
+
+    context "challange8" do
+    let(:input)  { File.read("challanges/cryptopals/set1-challange8.txt").split("\n").map{|c| CryptBuffer.from_hex(c)} }
+    let(:result) { 1 }
+
+    it "solves the challange" do
+      skip "nyd"
+      expect(subject.solve8(input)).to eq(result)
+    end
+  end
 end
 

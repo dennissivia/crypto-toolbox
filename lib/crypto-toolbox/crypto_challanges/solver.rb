@@ -52,5 +52,9 @@ module CryptoChallanges
       data = CryptBuffer.from_base64(input).str
       Ciphers::Aes.new(128,:ECB).decipher(data,key)
     end
+
+    def solve8(ciphers)
+      binding.pry
+    end
   end
 end
