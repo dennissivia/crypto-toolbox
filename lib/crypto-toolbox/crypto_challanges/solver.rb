@@ -49,6 +49,20 @@ module CryptoChallanges
     end
 
     def solve7(input,key)
+=begin      
+      binding.pry
+      cipher = OpenSSL::Cipher::AES.new("aes-128-ecb")
+      cipher.encrypt
+      key = cipher.random_key
+      iv = cipher.random_iv
+      encrypted = cipher.update(data) + cipher.final
+=end
+      binding.pry # extract first 16 bytes
+      decipher = OpenSSL::Cipher::AES.new('aes-128-ecb')
+      decipher.decrypt
+      decipher.key = key
+      decipher.iv = iv
+      (decipher.update(encrypted) + decipher.final)
     end
     
     

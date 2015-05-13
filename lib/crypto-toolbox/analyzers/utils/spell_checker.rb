@@ -4,7 +4,7 @@ module Analyzers
   module Utils
     class SpellChecker
       
-      def initialize(dict_lang="en_GB")
+      def initialize(dict_lang="en_US")
         @dict = FFI::Hunspell.dict(dict_lang)
       end
 =begin

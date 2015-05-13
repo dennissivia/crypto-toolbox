@@ -52,4 +52,15 @@ RSpec.describe CryptoChallanges::Solver do
       expect(subject.solve6(input).first.str).to include("I'm back and I'm ringin' the bell")
     end
   end
+  
+  context "challange7",wip: false do
+    let(:key)   { "YELLOW SUBMARINE" }
+    let(:input) { File.read("challanges/cryptopals/set1-challange6.txt") }
+    let(:plain) { "foobar" }
+    
+    it "solves the challange" do
+      skip "nyd"
+      expect(subject.solve7(input,key)).to include(plain)
+    end
+  end
 end
