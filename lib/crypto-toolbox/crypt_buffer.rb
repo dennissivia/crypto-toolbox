@@ -51,6 +51,10 @@ class CryptBuffer
     CryptBufferInputConverter.new.from_hex(input)
   end
 
+  def self.from_base64(input)
+    CryptBufferInputConverter.new.from_base64(input)
+  end
+
   def nth_bytes(n,offset: 0)
     return CryptBuffer([]) if n.nil? || n < 1
 

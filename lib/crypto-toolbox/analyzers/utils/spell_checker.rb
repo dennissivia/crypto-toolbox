@@ -1,10 +1,8 @@
 require 'ffi/hunspell'
 
-
 module Analyzers
   module Utils
     class SpellChecker
-
       
       def initialize(dict_lang="en_GB")
         @dict = FFI::Hunspell.dict(dict_lang)
@@ -23,15 +21,18 @@ Some statistics about it:
           8          13           9         534        1319        2809 
 (0.84,0.88] (0.88,0.92] (0.92,0.96]    (0.96,1] 
       10581       46598      198477     1440651 
+
+NOTE: There is ony caveat: Short messages with < 5 words may have 33 or 50% error rates
+if numbers or single char words are taken into account
 =end
       def known_words(str)
-        words = str.split(" ").select{|w| @dict.check?(w) }
+        words = str.split(" ").select{|w| check?(w) }
       end
 
       def human_word?(str)
-        @dict.check?(str)
+        check?(str)
       end
-
+      
       def human_phrase?(string)
         string.split(" ").all?{|part| human_word?(part)}
       end
@@ -46,19 +47,34 @@ Some statistics about it:
       # Using shell instead of hunspell ffi causes lots of escaping errors, even with shellwords.escape
       # errors = Float(`echo '#{Shellwords.escape(str)}' |hunspell -l |wc -l `.split.first)
       def human_language?(str)
-        words  = str.split(" ").length
-        errors = str.split(" ").map{|e| @dict.check?(e) }.count{|e| e == false}
+        #NOTE should be reject 1char numbers or all 1 char symbols
+        words       = str.split(" ").reject{|w| (w.length < 2 || w =~ /^[0-9]+$/) }
+        word_amount = words.length
+        errors      = words.map{|e| check?(e) }.count{|e| e == false}
         
-        error_rate = errors.to_f/words
-        
-        $stderr.puts error_rate.round(4) if ENV["CRYPTO_TOOBOX_PRINT_ERROR_RATES"]
-        
+        error_rate = errors.to_f/word_amount
+
+        report_error_rate(str,error_rate) if ENV["DEBUG_ANALYSIS"]
+
         error_rate_sufficient?(error_rate)
       end
       
       private
+
+      def report_error_rate(str,error_rate)
+        if ENV["DEBUG_ANALYSIS"]
+          $stderr.puts "=================================================="
+          $stderr.puts "str: #{str} has error rate: #{error_rate.round(4)}"
+          $stderr.puts "=================================================="
+        end
+      end
+
+      def check?(input)
+        @dict.check?(input) rescue false 
+      end
+      
       def error_rate_sufficient?(rate)
-        rate < 0.5
+        rate < 0.20
       end
     end
   end

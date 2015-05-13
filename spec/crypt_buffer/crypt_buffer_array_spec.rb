@@ -40,6 +40,9 @@ describe CryptBuffer  do
     it "supports range inputs" do
       expect(long[(4..8)]).to eq(CryptBuffer([72, 111, 117, 115, 101]))
     end
+    it "supports [x,y]" do
+      expect(long[0,3]).to eq(CryptBuffer([84,104,101]))
+    end
   end
 
   context "chunks_of(N) split buffer into parts of size N" do

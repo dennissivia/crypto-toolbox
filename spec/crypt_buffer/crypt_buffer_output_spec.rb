@@ -59,6 +59,14 @@ describe CryptBuffer do
         expect(empty.chars).to eq([])
       end
     end
+    context "#base64" do
+      it "encodes every byte in base64" do
+        expect(long.base64).to eq("VGhlIEhvdXNl")
+      end
+      it "handles empty buffers" do
+        expect(empty.str).to eq("")
+      end
+    end
 
     context "#str" do
       it "returns a string of the internal state" do

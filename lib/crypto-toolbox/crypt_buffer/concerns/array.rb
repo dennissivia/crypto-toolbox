@@ -22,8 +22,8 @@ module CryptBufferConcern
       CryptBuffer(bytes.last(n))
     end
 
-    def [](anything)
-      CryptBuffer(bytes[anything])
+    def [](*things)
+      CryptBuffer(bytes[*things])
     end
 
   end

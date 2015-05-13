@@ -16,6 +16,11 @@ class CryptBufferInputConverter
     CryptBuffer.new(hex2bytes(hexstr))
   end
   
+  def from_base64(input)
+    string = Base64.decode64(input)
+    CryptBuffer.new(str2bytes(string))
+  end
+  
   private
   def bytes_from_any(input)
     case input

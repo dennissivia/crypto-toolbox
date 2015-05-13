@@ -27,7 +27,19 @@ module CryptBufferConcern
       CryptBuffer(tmp)
     end
 
+    def hdist(other,normalize: false)
+      if normalize
+        hamming_distance(other) / length.to_f
+      else
+        hamming_distance(other)
+      end
+    end
+
     private
+
+    def hamming_distance(other)
+      (self ^ other).bits.join.count("1") 
+    end
     
     def sanitize_modulus(mod)
       (mod > 0) ? mod : 256

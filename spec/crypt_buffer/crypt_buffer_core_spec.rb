@@ -47,6 +47,16 @@ describe CryptBuffer do
     end
   end
 
+  context "#from_base64" do
+    let(:input) { "c2VjcmV0IG1lc3NhZ2U=" }
+    let(:plain) { "secret message" }
+
+    it "can parse valid base64 encoded strings" do
+      expect(CryptBuffer.from_base64(input).str). to eq(plain)
+    end
+    it "support \n separated base64" 
+  end
+  
   context "#from_hex" do
     it "interprets a hextring with 0x as hex string" do
       expect(CryptBuffer.from_hex("ef").hex).to eq("EF")

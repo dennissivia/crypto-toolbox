@@ -7,5 +7,10 @@ if ARGV[0].nil?
 else
   ciphertext = ARGV[0]
 
-  Analyzers::VigenereXor.new.analyze(ciphertext)
+  results = Analyzers::VigenereXor.new.analyze(ciphertext)
+  unless results.empty?
+    puts "[Success] Found valid result(s):"
+    puts results.map(&:str)
+  end
+
 end

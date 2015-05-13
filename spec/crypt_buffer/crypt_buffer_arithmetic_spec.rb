@@ -50,5 +50,24 @@ describe CryptBuffer do
       expect(CryptBuffer(plain).add(shift,mod: 91,offset: 65).str).to eq(cipher)
     end
   end
+  
+  context "#hdist (hamming distance)" do
+    let(:string1)  { "this is a test" }
+    let(:string2)  { "wokka wokka!!!" }
+    let(:distance) { 37 }
+    
+    it "calculates the hamming distance" do
+      expect(CryptBuffer(string1).hdist(CryptBuffer(string2))).to eq(distance)
+    end
+    
+    it "accepts strings as input" do
+      expect(CryptBuffer(string1).hdist(string2)).to eq(distance)
+    end
+
+    it "can calculate a normalized version" do
+      expect(CryptBuffer(string1).hdist(string2,normalize: true)).to eq(2.642857142857143)
+    end
+    
+  end
 end
 
