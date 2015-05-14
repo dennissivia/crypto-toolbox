@@ -6,7 +6,7 @@ module Analyzers
       class AsciiPlain
 
         
-        def initialize(keys,ciphertext,dict_lang="en_GB")
+        def initialize(keys,ciphertext,dict_lang="en_US")
           @keys = keys
           @c = @ciphertext = ciphertext
           @keylen = keys.first.length
@@ -17,7 +17,7 @@ module Analyzers
           # how often is the key repeated 
           reps = @c.bytes.length / @keylen
           result =[]
-          spell_checker = Analyzers::Utils::SpellChecker.new("en_GB")
+          spell_checker = Analyzers::Utils::SpellChecker.new("en_US")
 
           # should we fork here ?
           @keys.each_with_index do |key,i| #  i is used as a simple counter only !
