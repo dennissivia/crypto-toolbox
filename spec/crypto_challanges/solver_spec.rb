@@ -63,7 +63,7 @@ RSpec.describe CryptoChallanges::Solver do
     end
   end
 
-  context "challange8",wip: true do
+  context "challange8",wip: false do
     let(:input)  { File.read("challanges/cryptopals/set1-challange8.txt").split("\n").map{|c| CryptBuffer.from_hex(c)} }
     let(:result) { 1 }
 

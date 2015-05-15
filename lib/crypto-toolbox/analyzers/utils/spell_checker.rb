@@ -76,7 +76,7 @@ if numbers or single char words are taken into account
       # which makes it slower than hunspell.
       # Thus we stick with hunspell for correctness and speed.
       def check?(input)
-        @dict.check?(input)
+        @dict.check?(input) rescue false
         # @dict2.correct?(input.gsub(/[^a-zA-Z]/,""))
       end
       
