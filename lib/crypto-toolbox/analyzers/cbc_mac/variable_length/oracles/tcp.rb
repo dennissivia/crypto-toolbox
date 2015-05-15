@@ -34,14 +34,19 @@ module Analyzers
           def verify(message,tag)
             connect unless @verify_socket
 
-            # Message-length + message-chars + tag-chars + 0
-            # NOTE: check why chars instead of bytes.map does not work here
-            packet = (message.length.to_crypt_buffer + message + tag.split("") + [0] ).bytes.map(&:chr).join("")
+            packet = assemble_message(message,tag)
             
             @verify_socket.write(packet)
             @verify_socket.read(2).to_i
           end
 
+	  private
+
+          # Message-length + message-chars + tag-chars + 0
+          # NOTE: check why chars instead of bytes.map does not work here
+	  def assemble_message(message,tag)
+            (message.length.to_crypt_buffer + message + tag.split("") + [0] ).str
+	  end
           
         end
       end
