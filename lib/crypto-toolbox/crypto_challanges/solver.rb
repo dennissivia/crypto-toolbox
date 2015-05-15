@@ -50,7 +50,7 @@ module CryptoChallanges
 
     def solve7(input,key)
       data = CryptBuffer.from_base64(input).str
-      Ciphers::Aes.new(128,:ECB).decipher(data,key)
+      Ciphers::Aes.new(128,:ECB).decipher_ecb(data,key)
     end
 
     def solve8(ciphers)

@@ -49,12 +49,15 @@ describe CryptBuffer do
 
   context "#from_base64" do
     let(:input) { "c2VjcmV0IG1lc3NhZ2U=" }
+    let(:input_newline) { "c2VjcmV0I\nG1lc3NhZ2U=" }
     let(:plain) { "secret message" }
 
     it "can parse valid base64 encoded strings" do
       expect(CryptBuffer.from_base64(input).str). to eq(plain)
     end
-    it "support \n separated base64" 
+    it "support \n separated base64" do
+      expect(CryptBuffer.from_base64(input_newline).str). to eq(plain)
+    end
   end
   
   context "#from_hex" do

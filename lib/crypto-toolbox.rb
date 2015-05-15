@@ -17,4 +17,7 @@ require 'crypto-toolbox/ciphers/aes.rb'
 require 'crypto-toolbox/ciphers/caesar.rb'
 require 'crypto-toolbox/ciphers/rot13.rb'
 
+
+require 'crypto-toolbox/forgers/stream_ciphers/forge_generator.rb'
+
 require 'crypto-toolbox/crypto_challanges/solver.rb'

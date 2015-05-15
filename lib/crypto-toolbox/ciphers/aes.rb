@@ -5,13 +5,13 @@ module Ciphers
       @cipher = OpenSSL::Cipher::AES.new(keysize,mode)
     end
 
-    def decipher(input,key)
+    def decipher_ecb(input,key)
       @cipher.decrypt
       @cipher.key = key
       (@cipher.update(input) + @cipher.final)
     end
     
-    def encipher(input,key)
+    def encipher_ecb(input,key)
     end
   end
 end
