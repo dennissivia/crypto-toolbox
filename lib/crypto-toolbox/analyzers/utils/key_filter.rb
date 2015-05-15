@@ -5,27 +5,31 @@ module Analyzers
     module KeyFilter
       class AsciiPlain
 
-        
-        def initialize(keys,ciphertext,dict_lang="en_US")
+        def initialize(keys,ciphertext)
           @keys = keys
           @c = @ciphertext = ciphertext
           @keylen = keys.first.length
-          @dict = FFI::Hunspell.dict(dict_lang)
+          @detector = Analyzers::Utils::HumanLanguageDetector.new
+          @spell_checker = Analyzers::Utils::SpellChecker.new("en_US")
         end
 
         def filter
           # how often is the key repeated 
           reps = @c.bytes.length / @keylen
           result =[]
-          spell_checker = Analyzers::Utils::SpellChecker.new("en_US")
 
+          
+
+          
           # should we fork here ?
           @keys.each_with_index do |key,i| #  i is used as a simple counter only !
             test = CryptBuffer.new(@c.bytes[0,@keylen]).xor(key).str
             repkey = CryptBuffer.new((key*reps) + key[0,(@c.bytes.length % reps).to_i])
-            str    = @c.xor(repkey).to_s
-
-            if spell_checker.human_language?(str)
+            str  = @c.xor(repkey).to_s
+            
+            # NOTE: we dont need the ASCII check provided by the human language detector
+            # since the key selection is usually based on ascii value checks
+            if @spell_checker.human_language?(str)
               result << repkey
               break
             else

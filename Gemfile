@@ -6,6 +6,8 @@ group :development,:test do
   gem 'byebug'
   gem 'benchmark-ips'
   gem 'ruby-prof'
+  gem 'stackprof'
+  gem 'ffi-aspell', '~> 1.0.2'
 end
 
 group :test do

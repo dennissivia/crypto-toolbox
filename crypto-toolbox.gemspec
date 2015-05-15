@@ -19,8 +19,5 @@ EOF
 
   s.add_dependency 'aes', '~> 0.5'
   s.add_dependency 'ffi-hunspell', '~> 0.3'
-#  see Gemfile
-#  s.add_development_dependency 'pry'
-#  s.add_development_dependency 'rspec', '~> 3.2'
 end
 

@@ -25,9 +25,6 @@ module Analyzers
       # 3) xor any possible byte value (guess) with all nth's bytes
       # 4) select those guesses that decipher the nth-byte stream to only english plain ascii chars
       def run(input_buf,keylen)
-        #return run2(input_buf,keylen)
-        detector = Analyzers::Utils::HumanLanguageDetector.new
-        
         candidate_map = (0..(keylen-1)).each_with_object({}) do |key_byte_pos,hsh|
 =begin
 # Letter frquency testing
@@ -41,11 +38,6 @@ module Analyzers
           # create an array of every nth byte of the input. ( thus a pseudo stream of the nth bytes )
           # 1) create an enumerator of the nth positions. e.g for iteration 0: [0,7,14,...]
           # 2) Next: Map the positions to bytes of the input buffer
-          #
-          # NOTE: regular implementation without cryptbuffer magic:
-          # nth_stream = (key_byte_pos).step(input_buf.bytes.length() -1, keylen).map{|i| input_buf.bytes[i]}
-          # nth_byte_stream2 = CryptBuffer.new(nth_stream)
-
           nth_byte_stream = input_buf.nth_bytes(keylen,offset: key_byte_pos)
           hsh[key_byte_pos] = 0.upto(255).select{|guess| nth_byte_stream.xor_all_with(guess).bytes.all?{|byte| acceptable_char?(byte) } }
           

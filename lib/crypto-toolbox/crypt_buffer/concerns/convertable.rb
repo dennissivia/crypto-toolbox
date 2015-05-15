@@ -7,12 +7,12 @@ module CryptBufferConcern
     alias_method :h, :hex
     
     def chars
-      map{|b| b.to_i.chr}
+      map(&:chr)
     end
     alias_method :c, :chars
     
     def str
-      chars.join
+      map(&:chr).join
     end
     alias_method :s, :str
 

@@ -8,18 +8,6 @@ module CryptoChallanges
     def solve2(c1,c2)
       (CryptBuffer.from_hex(c1) ^ CryptBuffer.from_hex(c2)).hex.downcase
     end
-
-    def letter_count(str)
-      str.downcase.each_char.with_object({}) do |c,h|
-        h[c] = (h.fetch(c,0) + 1) if c =~ /[A-Za-z ]/
-      end
-    end
-    
-    def letter_freq(str)
-      counts   = letter_count(str)
-      quotient = counts.values.reduce(&:+).to_f
-      counts.sort_by{|k,v| v}.reverse.to_h.each_with_object({}){|(k,v),hsh| hsh[k] = (v/quotient) }
-    end
     
     def solve3(input)
       candidates = (1..256).map{ |guess| CryptBuffer.from_hex(input).xor_all_with(guess) }
@@ -27,7 +15,9 @@ module CryptoChallanges
       
       detector.human_language_entries(candidates).first.to_s
     end
-    
+
+    # challange:
+    # One of the 60-character strings in this file has been encrypted by single-character XOR.
     def solve4(hexstrings)
       detector = Analyzers::Utils::HumanLanguageDetector.new
       result = hexstrings.map{|h| CryptBuffer.from_hex(h)}.map.with_index do |c,i|

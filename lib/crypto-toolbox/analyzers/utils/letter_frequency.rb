@@ -18,19 +18,37 @@ module Analyzers
         'u' =>	2.88,
         'c' =>	2.71
       }
+
+      
       def letter_count(str)
         str.downcase.each_char.with_object({}) do |c,h|
-          h[c] = (h.fetch(c,0) + 1) if c =~ /[A-Za-z ]/
+          h[c] = increment_letter_count(h,c) if countable?(c)
         end
       end
       
       def letter_freq(str)
-        counts   = letter_count(str)
-        quotient = counts.values.reduce(&:+).to_f
-        counts.sort_by{|k,v| v}.reverse.to_h.each_with_object({}){|(k,v),hsh| hsh[k] = (v/quotient) }
+        counts      = letter_count(str)
+        total_chars = counts.values.reduce(&:+)
+        Hash[reverse_hash(counts).map{|k,v| [k,calculate_frequency(v,total_chars)] } ]
       end
 
+      
+      private
 
+      def reverse_hash(hsh)
+        hsh.sort_by{|k,v| -v}
+      end
+      def calculate_frequency(value,total)
+        (value/total.to_f).round(4)
+      end
+
+      def increment_letter_count(hsh,char)
+        (hsh.fetch(char,0) + 1) 
+      end
+
+      def countable?(char)
+        char =~ /[A-Za-z ]/
+      end
     end
   end
 end

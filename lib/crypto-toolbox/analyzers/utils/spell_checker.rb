@@ -1,4 +1,5 @@
 require 'ffi/hunspell'
+require 'ffi/aspell'
 
 module Analyzers
   module Utils
@@ -6,6 +7,7 @@ module Analyzers
       
       def initialize(dict_lang="en_US")
         @dict = FFI::Hunspell.dict(dict_lang)
+        @dict2 = FFI::Aspell::Speller.new(dict_lang)
       end
 =begin
 NOTE: About spelling error rates and language detection:
@@ -69,8 +71,13 @@ if numbers or single char words are taken into account
         end
       end
 
+      # note:
+      # Aspell is much faster but requires expensive and slow removal of all punctuation marks
+      # which makes it slower than hunspell.
+      # Thus we stick with hunspell for correctness and speed.
       def check?(input)
-        @dict.check?(input) rescue false 
+        @dict.check?(input)
+        # @dict2.correct?(input.gsub(/[^a-zA-Z]/,""))
       end
       
       def error_rate_sufficient?(rate)
