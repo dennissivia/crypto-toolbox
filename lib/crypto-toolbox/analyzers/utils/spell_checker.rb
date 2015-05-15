@@ -1,5 +1,5 @@
 require 'ffi/hunspell'
-require 'ffi/aspell'
+#require 'ffi/aspell'
 
 module Analyzers
   module Utils
@@ -7,7 +7,7 @@ module Analyzers
       
       def initialize(dict_lang="en_US")
         @dict = FFI::Hunspell.dict(dict_lang)
-        @dict2 = FFI::Aspell::Speller.new(dict_lang)
+        # @dict2 = FFI::Aspell::Speller.new(dict_lang)
       end
 =begin
 NOTE: About spelling error rates and language detection:
