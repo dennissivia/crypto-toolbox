@@ -2,24 +2,35 @@ require 'spec_helper'
 
 describe CryptBuffer do
   context "padding concern" do
-    let(:padded)     { CryptBuffer([1,2,3,4,5,6,7,8,5,5,5,5,5]) }
-    let(:stripped)   { CryptBuffer([1,2,3,4,5,6,7,8]) }
-    let(:not_padded) { CryptBuffer([1,2,3,4,5,6,7,8,9,5,5,5,5]) }
-    let(:empty)      { CryptBuffer([]) }
+    let(:padded)      { CryptBuffer([1,2,3,4,5,6,7,8,5,5,5,5,5]) }
+    let(:stripped)    { CryptBuffer([1,2,3,4,5,6,7,8]) }
+    let(:not_padded)  { CryptBuffer([1,2,3,4,5,6,7,8,9,5,5,5,5]) }
+    let(:empty)       { CryptBuffer([]) }
+
     
     context "#padding" do
-
+      let(:impossible1) { CryptBuffer([1,2,3,99]) }
+      let(:impossible2) { CryptBuffer([1,2,3,4])  }
+        
       it "returns the the included padding" do
         expect(padded.padding).to eq(CryptBuffer([5,5,5,5,5]))
       end
       
       it "returns [] if no pkcs7 padding is present" do
-        expect(not_padded.padding).to eq(CryptBuffer([]))
+        expect(not_padded.padding).to eq(empty)
       end
       it "returns [] if the buffer is empty" do
-        expect(empty.padding).to eq(CryptBuffer([]))
+        expect(empty.padding).to eq(empty)
+      end
+
+      it "returns [ ] if the last byte is > than length" do
+        expect(impossible1.padding).to eq(empty)
+      end
+      it "returns [ ] if the last byte is == length" do
+        expect(impossible2.padding).to eq(empty)
       end
     end
+    
     context "#strip_padding" do
       it "strips an existing padding from a buffer" do
         expect(padded.strip_padding).to eq(stripped)

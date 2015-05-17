@@ -44,7 +44,18 @@ module CryptoChallanges
     end
 
     def solve8(ciphers)
-      binding.pry
+      ciphers.map.with_index do |c,i|
+        if c.chunks_of(16).map(&:bytes).uniq.length < c.chunks_of(16).length
+          [i,c]
+        else
+          nil
+        end
+        # only resturn the first none nil value => compact.first
+      end.compact.first
+    end
+
+    def solve9(input)
+      CryptBuffer(input).pad(4).str
     end
   end
 end

@@ -63,13 +63,26 @@ RSpec.describe CryptoChallanges::Solver do
     end
   end
 
-  context "challange8",wip: false do
+  context "challange8" do
     let(:input)  { File.read("challanges/cryptopals/set1-challange8.txt").split("\n").map{|c| CryptBuffer.from_hex(c)} }
-    let(:result) { 1 }
+    let(:result_index) { 132 }
+    let(:result_msg)   { "D880619740A8A19B7840A8A31C810A3D08649AF70DC06F4FD5D2D69C744CD283E2DD052F6B641DBF9D11B0348542BB5708649AF70DC06F4FD5D2D69C744CD2839475C9DFDBC1D46597949D9C7E82BF5A08649AF70DC06F4FD5D2D69C744CD28397A93EAB8D6AECD566489154789A6B0308649AF70DC06F4FD5D2D69C744CD283D403180C98C8F6DB1F2A3F9C4040DEB0AB51B29933F2C123C58386B06FBA186A"  }
 
-    it "solves the challange" do
-      skip "nyd"
-      expect(subject.solve8(input)).to eq(result)
+    it "finds the correct index" do
+      expect(subject.solve8(input).first).to eq(result_index)
+    end
+    
+    it "contains the correct ciphertext" do
+      expect(subject.solve8(input)[1].hex).to eq(result_msg)
+    end
+  end
+
+  context "challange9" do
+    let(:input)  { "YELLOW SUBMARINE" }
+    let(:output) { "YELLOW SUBMARINE\x04\x04\x04\x04" }
+    
+    it "is solved" do
+      expect(subject.solve9(input)).to eq(output)
     end
   end
 end

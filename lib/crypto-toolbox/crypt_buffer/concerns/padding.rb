@@ -54,6 +54,7 @@ module CryptBufferConcern
     def subset_padding
       last = bytes.last
       return [] if last.nil?
+      return [] if last >= length
       # e.g. 5: take from -5,  5 elems
       bytes[-1 * last, last]
     end
