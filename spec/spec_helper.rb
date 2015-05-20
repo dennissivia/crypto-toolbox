@@ -5,9 +5,6 @@ require 'pry'
 require "codeclimate-test-reporter"
 CodeClimate::TestReporter.start
 
-require 'coveralls'
-Coveralls.wear!
-
 RSpec.configure do |config|
   config.failure_color = :magenta
   config.tty = true

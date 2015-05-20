@@ -40,22 +40,20 @@ module CryptoChallanges
 
     def solve7(input,key)
       data = CryptBuffer.from_base64(input).str
-      Ciphers::Aes.new(128,:ECB).decipher_ecb(data,key)
+      Ciphers::Aes.new(128,:ECB).decipher_ecb(key,data)
     end
 
     def solve8(ciphers)
-      ciphers.map.with_index do |c,i|
-        if c.chunks_of(16).map(&:bytes).uniq.length < c.chunks_of(16).length
-          [i,c]
-        else
-          nil
-        end
-        # only resturn the first none nil value => compact.first
-      end.compact.first
+      Utils::EcbDetector.new.detect(ciphers).first
     end
 
     def solve9(input)
       CryptBuffer(input).pad(4).str
+    end
+
+    def solve10(key,input,iv)
+      data  = CryptBuffer.from_base64(input).str
+      Ciphers::Aes.new(128,:ECB).decipher_cbc(key,data,iv: iv).str
     end
   end
 end
