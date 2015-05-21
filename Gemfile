@@ -1,12 +1,18 @@
 source 'https://rubygems.org'
 
 group :development,:test do
-  gem 'pry'
   gem 'version'
+
+  gem 'pry'
   gem 'byebug'
+
+  gem 'flog'
+
   gem 'benchmark-ips'
   gem 'ruby-prof'
   gem 'stackprof'
+
+  # just testing aspell at the moment
   gem 'ffi-aspell', '~> 1.0.2'
 end
 

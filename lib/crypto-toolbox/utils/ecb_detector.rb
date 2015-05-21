@@ -1,7 +1,14 @@
 module Utils
   class EcbDetector
+
+    def is_ecb?(ciphertext)
+      ecb_mode?(CryptBuffer(ciphertext))
+    end
+    
     def detect(ciphers)
-      result = ciphers.map.with_index{|c,i| detect_ecb_entry(c,i) }
+      result = ciphers.map.with_index do|c,i|
+        ecb_mode?(c) ? [i,c] : []
+      end
       sanitize_result(result)
     end
 
@@ -16,13 +23,9 @@ module Utils
     def duplicate_chunk?(chunks)
       chunks.map(&:bytes).uniq.length < chunks.length
     end
-
-    def detect_ecb_entry(ciphertext,index)
-      if duplicate_chunk?(ciphertext.chunks_of(16))
-        [index,ciphertext]
-      else
-        []
-      end
+    
+    def ecb_mode?(ciphertext)
+      duplicate_chunk?(ciphertext.chunks_of(16))
     end
     
   end

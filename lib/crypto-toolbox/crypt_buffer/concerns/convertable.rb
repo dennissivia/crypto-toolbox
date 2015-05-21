@@ -28,6 +28,9 @@ module CryptBufferConcern
       strict ?  Base64.strict_encode64(str) : Base64.encode64(str) 
     end
 
+    def to_crypt_buffer
+      self
+    end
     private
     def bytes2hex(bytes)
       bytes.map{|b| b.to_s(16)}.map{|hs| hs.length == 1 ? "0#{hs}" : hs  }.join
