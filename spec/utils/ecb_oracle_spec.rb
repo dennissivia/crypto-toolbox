@@ -13,13 +13,13 @@ RSpec.describe Utils::EcbOracle,wip: false do
 
     it "gives access to a backdoor check of the encryption mode" do
       modes=[:ecb,:cbc]
-      _ = subject.encipher(plaintext,random_pads: true)
+      _ = subject.encipher(plaintext,prepend: true,append: true)
       
       expect(modes).to include(subject.mode)
     end
 
     it "pads the message with at least 10 bytes" do
-      ciphertext = subject.encipher(plaintext,random_pads: true)
+      ciphertext = subject.encipher(plaintext,prepend: true,append: true)
       expect(ciphertext.length >= plaintext.length + 10).to be_truthy
     end
     it "pads the message with at most 20 bytes" do

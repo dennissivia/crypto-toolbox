@@ -13,9 +13,12 @@ require 'crypto-toolbox/analyzers/utils/ascii_language_detector.rb'
 require 'crypto-toolbox/analyzers/utils/spell_checker.rb'
 require 'crypto-toolbox/analyzers/utils/human_language_detector.rb'
 
+
 require 'crypto-toolbox/analyzers/padding_oracle.rb'
 require 'crypto-toolbox/analyzers/cbc_mac.rb'
 require 'crypto-toolbox/analyzers/vigenere_xor.rb'
+require 'crypto-toolbox/analyzers/ecb_string_appender.rb'
+
 
 require 'crypto-toolbox/ciphers/aes.rb'
 require 'crypto-toolbox/ciphers/caesar.rb'

@@ -41,7 +41,7 @@ module CryptoChallanges
 
       def solve7(input,key)
         data = CryptBuffer.from_base64(input).str
-        Ciphers::Aes.new(128).decipher_ecb(key,data)
+        Ciphers::Aes.new.decipher_ecb(key,data)
       end
 
       def solve8(ciphers)
@@ -56,8 +56,17 @@ module CryptoChallanges
 
       def solve10(key,input,iv)
         data  = CryptBuffer.from_base64(input).str
-        Ciphers::Aes.new(128).decipher_cbc(key,data,iv: iv).str
+        Ciphers::Aes.new.decipher_cbc(key,data,iv: iv).str
       end
+      
+      def solve11(oracle,plaintext)
+        puts "see tests"
+      end
+      
+      def solve12(oracle,suffix=nil)
+        Analyzers::EcbStringAppender.new(oracle).analyze
+      end
+      
     end
   end
   

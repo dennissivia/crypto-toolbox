@@ -2,18 +2,21 @@ module Utils
   class EcbOracle
     attr_reader :mode
     
-    def initialize
-      @key  = nil
+    def initialize(static_key: nil,static_mode: nil,block_size: 128,static_prefix: nil,static_suffix: nil)
+      @key  = CryptBuffer(static_key)
+      @mode = static_mode
       @iv   = nil
       @c    = nil
-      @mode = nil
+      @block_size = block_size
+      @suffix = static_suffix
+      @prefix = static_prefix
     end
     
-    def encipher(plaintext,random_pads: false)
-      @key      = CryptBuffer.random(16)
-      @mode     = [:cbc,:ecb][SecureRandom.random_number(2)]
-      message   = random_pads ? pad_message(plaintext) : plaintext
-      
+    def encipher(plaintext,prepend: false,append: false)
+      #support reproducable keys and mode
+      @key      ||= CryptBuffer.random(16)
+      @mode     ||= [:cbc,:ecb][SecureRandom.random_number(2)]
+      message   = pad_message(plaintext,prepend,append) 
       method  = "encipher_#{@mode}".to_sym
       # we dispatch the method to avoid if-else dispatches
       # due to the difference of IV usage
@@ -22,24 +25,28 @@ module Utils
 
     private
     
-    def pad_message(msg)
+    def pad_message(msg,prepend,append)
       pad_range = (5..10).to_a
       lpad_size = pad_range.sample
       rpad_size = pad_range.sample
-      lpad      = SecureRandom.random_bytes(lpad_size)
-      rpad      = SecureRandom.random_bytes(rpad_size)
+      @prefix ||= SecureRandom.random_bytes(lpad_size) 
+      @suffix ||= SecureRandom.random_bytes(rpad_size)
+
+      # NOTE PLEASE rewrite ME !!!
+      msg = @prefix + msg if prepend
+      msg = msg + @suffix if append
       
-      lpad + msg + rpad
+      msg
     end
     
     def encipher_cbc(plaintext)
       @iv     = CryptBuffer.random(16)
-      crypter = Ciphers::Aes.new(128)
+      crypter = Ciphers::Aes.new
       crypter.send(:encipher_cbc,@key,plaintext,iv: @iv.str)
     end
     
     def encipher_ecb(plaintext)
-      crypter = Ciphers::Aes.new(128)
+      crypter = Ciphers::Aes.new
       crypter.send(:encipher_ecb,@key,plaintext)
     end
     

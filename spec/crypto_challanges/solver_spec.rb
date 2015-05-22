@@ -27,7 +27,7 @@ RSpec.describe CryptoChallanges::Solver do
     end
   end
 
-  context "solve4" do
+  context "solve4",cpu_burner: true do
     let(:input) { File.read("challanges/cryptopals/set1-challange4.txt").split("\n") }
     it "solves the challange" do
       expect(subject.solve4(input)).to eq("Now that the party is jumping\n")
@@ -115,6 +115,20 @@ RSpec.describe CryptoChallanges::Solver do
           expect(detector.is_ecb?(ciphertext)).to eq(expectation)
         end
       end
+    end
+  end
+  context "challange12",cpu_burner: true do
+    let(:suffix) {
+      Base64.decode64("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK")
+    }
+    let(:key)      { "my-secret-key" }
+    let(:mode)     { :ecb            }
+    let(:oracle)   { Utils::EcbOracle.new(static_key: key,static_mode: mode,static_suffix: suffix) }
+
+    it "solves the challange" do
+      plaintext = subject.solve12(oracle,suffix)
+
+      expect(plaintext).to include("Rollin")
     end
   end
   

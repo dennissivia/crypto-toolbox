@@ -5,6 +5,8 @@ group :development,:test do
 
   gem 'pry'
   gem 'byebug'
+  gem 'pry-byebug'
+  gem 'pry-plus-byebug'
 
   gem 'flog'
 
