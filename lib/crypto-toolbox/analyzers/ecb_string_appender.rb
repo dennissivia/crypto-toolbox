@@ -1,50 +1,76 @@
 module Analyzers
+
+  # Public: This analyzer attacks oracles that append any unknown string to
+  # its input messages and decrypts the appended string.
+  # In practice Email autoresponders sometimes append a data to a given input.
+  # Thus this analyzer can break any ecb encryption that works this way
+  #
+  # Examples
+  #
+  
   class EcbStringAppender
+    DUMMY = "A".freeze
     attr_reader :oracle
+    
     def initialize(oracle)
-      @oracle = oracle
+      @oracle    = oracle
+      raise "None-ECB oracle" unless ::Utils::EcbDetector.new.is_ecb?(@oracle.encipher(DUMMY * (block_size * 2)))
     end
 
     def analyze
-      dummy      = "A"
-      blocksize  = oracle.encipher("\0").length()
-      ciphertext = oracle.encipher(dummy * (blocksize * 2))
-      detector   = ::Utils::EcbDetector.new
-        
-      aligned_suffix_length = oracle.encipher("",append: true).length
-      real_suffix_length    = calculate_real_suffix_length(oracle,blocksize,aligned_suffix_length) #aligned_suffix_len -1 # substract the test byte \0
-      suffix_blocks         = aligned_suffix_length / blocksize
-      
-      raise "None-ECB oracle" unless detector.is_ecb?(ciphertext)
-
-      # keep the length of the msg construction (n*dummy + last )
-      hits = []
-      (0..(suffix_blocks-1)).each do |block_id|
-        (1..blocksize).each do |pos|
+      suffix_block_ids.with_object("") do |block_id, hits|
+        each_block_position do |pos|
           # stop as soon as we have all the bytes that are appended ( without and ciphermode padding )
           break if hits.length >= real_suffix_length
-          
-          msg    = (dummy * (blocksize - pos))
-          # build a dictionary for the current dummy + all hits
-          # resulting in entries with blocksize -1 length
-          dict   = assemble_dict(oracle,msg + hits.join)
-          result = oracle.encipher(msg,append: true)[0,blocksize*(block_id+1)]
-          match  = dict[result]
-          raise "Could not find dictonary entriy for block #{block_id}, pos: #{pos}" if match.nil?
-          hits << match
+          hits << attempt_match(hits, block_id, pos)
         end
       end
-      hits.join
     end
-
     
     private
-    def calculate_real_suffix_length(oracle,blocksize,minimum_length)
-      dummy = "\0"
+    
+    def attempt_match(hits, block_id, pos)
+      msg = (DUMMY * (block_size - pos))
+
+      # build a dictionary for the current dummy + all hits
+      # resulting in entries with block_size -1 length
+      dict   = assemble_dict(oracle,msg + hits)
+      result = @oracle.encipher(msg,append: true)[0,block_size * (block_id.succ)]
+
+      dict[result].tap do |match|
+        if match.nil?
+          raise "Could not find dictonary entriy for block #{block_id}, pos: #{pos}"
+        end
+      end
+    end
+    def each_block_position(&block)
+      1.upto(block_size,&block)
+    end
+
+    def block_size
+      @block_size ||= @oracle.encipher("\0").size
+    end
+    def suffix_blocks
+      @suffix_blocks ||= aligned_suffix_length / block_size
+    end
+
+    def suffix_block_ids
+      0.upto(suffix_blocks.pred)
+    end
+    
+    def aligned_suffix_length
+      @aligned_suffix_length ||= @oracle.encipher("", append: true).length
+    end
+    
+    def real_suffix_length
+      @real_suffix_length ||= calculate_real_suffix_length(oracle,block_size,aligned_suffix_length) 
+    end
+    
+    def calculate_real_suffix_length(oracle,block_size,minimum_length)
       # map has a smell, that is does not abort and thus create unnecessary
       # requests... while, count++; break; smells even worse
-      (0..blocksize).each do |i|
-        result = oracle.encipher(dummy * i,append: true)
+      (0..block_size).each do |i|
+        result = oracle.encipher(DUMMY * i,append: true)
         if result.length > minimum_length
           return minimum_length - (i-1)
         end
