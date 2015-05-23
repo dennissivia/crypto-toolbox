@@ -27,4 +27,4 @@ require 'crypto-toolbox/ciphers/rot13.rb'
 require 'crypto-toolbox/forgers/stream_ciphers/forge_generator.rb'
 
 
-require 'crypto-toolbox/crypto_challanges/solver.rb'
+require 'crypto-toolbox/matasano/solver.rb'
