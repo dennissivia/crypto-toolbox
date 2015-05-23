@@ -28,7 +28,7 @@ RSpec.describe Matasano::Solver do
   end
 
   context "solve4",cpu_burner: true do
-    let(:input) { File.read("challanges/cryptopals/set1-challange4.txt").split("\n") }
+    let(:input) { File.read("challange-input/matasato/set1-challange4.txt").split("\n") }
     it "solves the challange" do
       expect(subject.solve4(input)).to eq("Now that the party is jumping\n")
     end
@@ -46,7 +46,7 @@ RSpec.describe Matasano::Solver do
   end
 
   context "challange6"  do
-    let(:input) { File.read("challanges/cryptopals/set1-challange6.txt") }
+    let(:input) { File.read("challange-input/matasato/set1-challange6.txt") }
     let(:plain) { "I'm back and I'm ringin' the bell" }
     it "solves the challange" do
       expect(subject.solve6(input).first.str).to include(plain)
@@ -55,7 +55,7 @@ RSpec.describe Matasano::Solver do
   
   context "challange7" do
     let(:key)   { "YELLOW SUBMARINE" }
-    let(:input) { File.read("challanges/cryptopals/set1-challange7.txt") }
+    let(:input) { File.read("challange-input/matasato/set1-challange7.txt") }
     let(:plain) { "I'm back and I'm ringin' the bell" }
 
     it "solves the challange" do
@@ -64,7 +64,7 @@ RSpec.describe Matasano::Solver do
   end
 
   context "challange8" do
-    let(:input)  { File.read("challanges/cryptopals/set1-challange8.txt").split("\n").map{|c| CryptBuffer.from_hex(c)} }
+    let(:input)  { File.read("challange-input/matasato/set1-challange8.txt").split("\n").map{|c| CryptBuffer.from_hex(c)} }
     let(:result_index) { 132 }
     let(:result_msg)   { "D880619740A8A19B7840A8A31C810A3D08649AF70DC06F4FD5D2D69C744CD283E2DD052F6B641DBF9D11B0348542BB5708649AF70DC06F4FD5D2D69C744CD2839475C9DFDBC1D46597949D9C7E82BF5A08649AF70DC06F4FD5D2D69C744CD28397A93EAB8D6AECD566489154789A6B0308649AF70DC06F4FD5D2D69C744CD283D403180C98C8F6DB1F2A3F9C4040DEB0AB51B29933F2C123C58386B06FBA186A"  }
 
