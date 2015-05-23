@@ -1,10 +1,12 @@
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
+
+
 require 'rspec'
 require 'crypto-toolbox'
 require 'byebug'
 require 'pry'
 
-require "codeclimate-test-reporter"
-CodeClimate::TestReporter.start
 
 RSpec.configure do |config|
   config.failure_color = :magenta

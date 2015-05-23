@@ -13,7 +13,7 @@ module Ciphers
     end
 
     def encipher_ecb(key,input)
-      encipher_ecb_blockwise(key,CryptBuffer(input).chunks_of(@block_size_bytes))
+      encipher_ecb_blockwise(CryptBuffer(key),CryptBuffer(input).chunks_of(@block_size_bytes))
     end
     
     def encipher_cbc(key_str,input_str,iv: nil)
@@ -23,6 +23,7 @@ module Ciphers
     def decipher_cbc(key_str,input_str,iv: nil)
       unicipher_cbc(:decipher,key_str,input_str,iv)
     end
+
 
     private
 

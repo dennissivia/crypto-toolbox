@@ -98,7 +98,7 @@ RSpec.describe CryptoChallanges::Solver do
     end
   end
 
-  context "challange11",wip: true do
+  context "challange11" do
     let(:plaintext)  { "1-2-3-4-5-6-7-8-_ _ _ _ _ _ _ _ 1-2-3-4-5-6-7-8-: Mary had a little lamb, His fleece was white as snow, And everywhere that Mary"  }
     let(:oracle)     { Utils::EcbOracle.new   }
     let(:detector)   { Utils::EcbDetector.new }
@@ -131,6 +131,40 @@ RSpec.describe CryptoChallanges::Solver do
 
       expect(plaintext).to include("Rollin")
     end
+  end
+
+  context "challange13" do
+    let(:sample_email)   { "foo@bar.com" }
+    let(:sample_role)    { "guest" }
+    let(:sample_uid)     { "10" }
+    let(:sample_profile) { "email=foo@bar.com&uid=10&role=guest" }
+    let(:sample_hash)    { { email: sample_email, uid: sample_uid, role: sample_role } }
+    let(:key)            { "super-secret" }
+    let(:aes)            { Ciphers::Aes.new }
+    let(:ciphertext)     { aes.encipher_ecb(key,sample_profile) }
+    
+
+    it "parses a string" do
+      expect(subject.parse_profile(sample_profile)).to eq(sample_hash)
+    end
+
+    it "encodes the profile" do
+      expect(subject.profile_for(sample_email)).to eq(sample_profile)
+    end
+
+    it "encryption and decryption works" do
+      plaintext  = aes.decipher_ecb(key,ciphertext).to_crypt_buffer.strip_padding.str
+      
+      expect(plaintext).to eq(sample_profile)
+    end
+    
+    it "solves the challange" do
+      result = subject.solve13(key)
+
+      expect(result[:role]).to eq("admin")
+    end
+
+    
   end
   
 end
