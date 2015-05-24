@@ -15,7 +15,7 @@ RSpec.describe Matasano::Solver do
   context "challange10" do
     let(:key)    { "YELLOW SUBMARINE" }
     let(:iv)     { (1..16).map{|_| 0.chr }.to_a.join }
-    let(:input)  { File.read("challange-input/matasato/set2-challange10.txt")}
+    let(:input)  { File.read("challange-input/matasano/set2-challange10.txt")}
     let(:result) { "I'm back and I'm ringin' the bell" }
 
     
