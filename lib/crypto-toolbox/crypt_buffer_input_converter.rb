@@ -1,5 +1,4 @@
 
-
 class CryptBufferInputConverter
   def convert(input)
     bytes_from_any(input)

@@ -1,4 +1,5 @@
-# coding: utf-8
+require 'base64'
+
 require 'crypto-toolbox/utils/reporting/console.rb'
 require 'crypto-toolbox/utils/hamming_distance_filter.rb'
 require 'crypto-toolbox/utils/ecb_detector.rb'
