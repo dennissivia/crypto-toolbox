@@ -1,14 +1,17 @@
-module CryptBufferConcern
-  module Padding
-    # This module extends functionality the CryptBuffer to
-    # handle PKCS7 padding.
-    # It has the ability to detect, replace, add and strip a
-    # padding from a CryptBuffer to return a new one without
-    # mutating the existing buffer.
-    #
-    # The purpose is making crypto analysis of cbc and other
-    # cipher modes that use pkcs7 padding easier.
 
+
+module CryptBufferConcern
+  # This module extends functionality the CryptBuffer to
+  # handle PKCS7 padding.
+  # It has the ability to detect, replace, add and strip a
+  # padding from a CryptBuffer to return a new one without
+  # mutating the existing buffer.
+  #
+  # The purpose is making crypto analysis of cbc and other
+  # cipher modes that use pkcs7 padding easier.
+  module Padding
+    class InvalidPkcs7Padding < RuntimeError; end
+    
     # Return any existing padding
     def padding
       last   = bytes.last
@@ -32,7 +35,11 @@ module CryptBufferConcern
       end
       self.class.new(subset)
     end
-
+    
+    def strip_padding!
+      raise InvalidPkcs7Padding, "No valid pkcs#7 padding present" unless padding?
+      strip_padding
+    end
     
     def padding?
       !padding.empty?

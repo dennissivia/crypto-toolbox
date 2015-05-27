@@ -57,6 +57,9 @@ module Matasano
         Analyzers::EcbStringAppender.new(oracle).analyze
       end
 
+      def solve15(input)
+        CryptBuffer(input).strip_padding!.str
+      end
     end
   end
 end

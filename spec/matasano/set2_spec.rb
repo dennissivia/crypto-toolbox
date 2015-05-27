@@ -87,6 +87,22 @@ RSpec.describe Matasano::Solver do
       expect(plaintext).to eq(plaintext)
     end
   end
+
+  context "challange15" do
+    let(:padded)   { "ICE ICE BABY\x04\x04\x04\x04" }
+    let(:unpadded) { "ICE ICE BABY" }
+
+    it "strips existing padding" do
+      expect(subject.solve15(padded)).to eq(unpadded)
+    end
+    
+    it "raises an error on missing paddings" do
+      expect{
+        subject.solve15(unpadded)
+      }.to raise_error
+    end
+    
+  end
   
   
 end
