@@ -29,7 +29,7 @@ RSpec.describe Matasano::Solver do
     let(:oracle)     { Utils::EcbOracle.new   }
     let(:detector)   { Utils::EcbDetector.new }
 
-    context "can always detect ECB mode if two 16 byte blocks are identical",wip: false do
+    context "can always detect ECB mode if two 16 byte blocks are identical" do
       
       (1..50).each do |i|
         it "works on iteration #{i} " do
@@ -48,50 +48,46 @@ RSpec.describe Matasano::Solver do
     let(:suffix) {
       Base64.decode64("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK")
     }
-    let(:key)      { "my-secret-key" }
-    let(:mode)     { :ecb            }
-    let(:oracle)   { Utils::EcbOracle.new(static_key: key,static_mode: mode,static_suffix: suffix) }
+    let(:plaintext) { suffix }
+    let(:key)       { "my-secret-key" }
+    let(:mode)      { :ecb            }
+    let(:oracle)    { Utils::EcbOracle.new(static_key: key,static_mode: mode,static_suffix: suffix,prepend: false, append: true) }
 
     it "solves the challange" do
-      plaintext = subject.solve12(oracle,suffix)
+      result = subject.solve12(oracle)
 
-      expect(plaintext).to include("Rollin")
+      expect(result).to eq(plaintext)
     end
   end
 
   context "challange13" do
-    let(:sample_email)   { "foo@bar.com" }
-    let(:sample_role)    { "guest" }
-    let(:sample_uid)     { "10" }
-    let(:sample_profile) { "email=foo@bar.com&uid=10&role=guest" }
-    let(:sample_hash)    { { email: sample_email, uid: sample_uid, role: sample_role } }
-    let(:key)            { "super-secret" }
-    let(:aes)            { Ciphers::Aes.new }
-    let(:ciphertext)     { aes.encipher_ecb(key,sample_profile) }
-    
-
-    it "parses a string" do
-      expect(subject.parse_profile(sample_profile)).to eq(sample_hash)
-    end
-
-    it "encodes the profile" do
-      expect(subject.profile_for(sample_email)).to eq(sample_profile)
-    end
-
-    it "encryption and decryption works" do
-      plaintext  = aes.decipher_ecb(key,ciphertext).to_crypt_buffer.strip_padding.str
-      
-      expect(plaintext).to eq(sample_profile)
-    end
+    let(:key)  { "super-secret" }
     
     it "solves the challange" do
       result = subject.solve13(key)
 
       expect(result[:role]).to eq("admin")
     end
-
-    
   end
+
+  context "challange14",cpu_burner: true do
+    let(:suffix) {
+      Base64.decode64("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK")
+    }
+    # use the same random prefix for all the encryptions
+    let(:prefix)    { SecureRandom.random_bytes(rand(16)) }
+    let(:key)       { "my-secret-key" }
+    let(:mode)      { :ecb            }
+    let(:plaintext) { suffix }
+    let(:oracle)    { Utils::EcbOracle.new(static_key: key,static_mode: mode,static_prefix: prefix,static_suffix: suffix,prepend: true, append: true) }
+
+    it "solves the challange" do
+      plaintext = subject.solve14(oracle)
+
+      expect(plaintext).to eq(plaintext)
+    end
+  end
+  
   
 end
 

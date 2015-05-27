@@ -2,7 +2,8 @@ module Utils
   class EcbDetector
 
     def is_ecb?(ciphertext)
-      ecb_mode?(CryptBuffer(ciphertext))
+      is_ecb_aligned?(CryptBuffer(ciphertext)) ||
+        is_ecb_unaligned?(CryptBuffer(ciphertext))
     end
     
     def detect(ciphers)
@@ -13,6 +14,14 @@ module Utils
     end
 
     private
+
+    def is_ecb_aligned?(buffer)
+      ecb_mode?(buffer)
+    end
+
+    def is_ecb_unaligned?(buffer)
+      false
+    end
     
     def sanitize_result(result)
       result.reject(&:empty?)
@@ -30,3 +39,4 @@ module Utils
     
   end
 end
+

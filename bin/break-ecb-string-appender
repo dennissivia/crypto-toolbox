@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+require 'crypto-toolbox'
+require 'pry'
+require 'stackprof'
+
+
+suffix = plaintext =  Base64.decode64("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK")
+key       = "my-secret-key" 
+mode      = :ecb
+oracle    = Utils::EcbOracle.new(static_key: key,static_mode: mode,static_suffix: suffix,prepend: false, append: true) 
+
+
+StackProf.run(mode: :cpu, out: 'tmp/stackprof-ecb-decryption.dump') do
+  result = Matasano::Solver.new.solve12(oracle)
+  puts "\nBroke ECB! Result: \n#{result}\n" if result
+end
+
+
+
+

@@ -4,6 +4,10 @@ require 'crypto-toolbox/utils/hamming_distance_filter.rb'
 require 'crypto-toolbox/utils/ecb_detector.rb'
 require 'crypto-toolbox/utils/ecb_oracle.rb'
 
+require 'crypto-toolbox/oracles/user_profile_encryption_oracle.rb'
+
+
+
 require 'crypto-toolbox/crypt_buffer_input_converter.rb'
 require 'crypto-toolbox/crypt_buffer.rb'
 
