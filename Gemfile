@@ -15,7 +15,7 @@ group :development,:test do
   gem 'stackprof'
 
   # just testing aspell at the moment
-  gem 'ffi-aspell', '~> 1.0.2'
+  gem 'ffi-aspell', '~> 1.1'
 end
 
 group :test do

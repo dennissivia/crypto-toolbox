@@ -6,6 +6,7 @@ require 'crypto-toolbox/utils/ecb_detector.rb'
 require 'crypto-toolbox/utils/ecb_oracle.rb'
 
 require 'crypto-toolbox/oracles/user_profile_encryption_oracle.rb'
+require 'crypto-toolbox/oracles/cbc_mutating_encryption_oracle.rb'
 
 
 
@@ -23,6 +24,7 @@ require 'crypto-toolbox/analyzers/padding_oracle.rb'
 require 'crypto-toolbox/analyzers/cbc_mac.rb'
 require 'crypto-toolbox/analyzers/vigenere_xor.rb'
 require 'crypto-toolbox/analyzers/ecb_string_appender.rb'
+require 'crypto-toolbox/analyzers/cbc_mutating_encryption.rb'
 
 
 require 'crypto-toolbox/ciphers/aes.rb'

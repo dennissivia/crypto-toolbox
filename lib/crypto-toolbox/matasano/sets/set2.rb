@@ -60,6 +60,12 @@ module Matasano
       def solve15(input)
         CryptBuffer(input).strip_padding!.str
       end
+
+      def solve16(oracle)
+        analyzer   = CryptoToolbox::Analyzers::CbcMutatingEncryption.new(oracle)
+        analyzer.assemble_attack_message
+      end
+      
     end
   end
 end

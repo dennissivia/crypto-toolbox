@@ -101,10 +101,16 @@ RSpec.describe Matasano::Solver do
         subject.solve15(unpadded)
       }.to raise_error
     end
-    
   end
-  
-  
+
+  context "challange16" do
+    let(:user)     { "alice" }
+    let(:oracle)   { CryptoToolbox::Oracles::CbcMutatingEncryptionOracle.new }
+    it "solves the challange" do
+      result = subject.solve16(oracle)
+      expect(oracle.is_admin?(result)).to be_truthy
+    end
+  end
 end
 
 
