@@ -1,7 +1,6 @@
-
-module Analyzers
-  module PaddingOracle
-    module Oracles
+module CryptoToolbox
+  module Oracles
+    module PaddingOracle
       class HttpOracle
         def initialize
           require 'net/http'

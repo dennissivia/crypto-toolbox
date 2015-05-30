@@ -1,6 +1,3 @@
-require 'crypto-toolbox/analyzers/padding_oracle/oracles/http_oracle.rb'
-require 'crypto-toolbox/analyzers/padding_oracle/oracles/tcp_oracle.rb'
-
 
 module Analyzers
   module PaddingOracle
@@ -10,7 +7,7 @@ module Analyzers
       attr_reader :result
       include ::Utils::Reporting::Console
       
-      def initialize(oracle = ::Analyzers::PaddingOracle::Oracles::TcpOracle.new)
+      def initialize(oracle = CryptoToolbox::Oracles::PaddingOracle::TcpOracle.new)
         @result      = [ ]
         @oracle      = oracle
       end
@@ -25,21 +22,21 @@ module Analyzers
       def analyze(cipher)
         blocks = CryptBuffer.from_hex(cipher).chunks_of(16)
 
-        # for whatever reason ranges cant be from high to low
+        # ranges cant be from high to low
         (1..(blocks.length() -1)).reverse_each do |block_index|
           result.unshift analyse_block(blocks,block_index)
         end
-        
-        report_result(result)
+
+        plaintext = CryptBuffer(result.flatten)
+        report_result(plaintext)
+        plaintext.strip_padding
       end
-
-
       
       private
 
       def analyse_block(blocks,block_index)
         block_result = []
-        
+
         # manipulate each byte of the 16 byte block
         1.upto(blocks[block_index -1].length) do |pad_index|
           with_oracle_connection do
@@ -52,9 +49,9 @@ module Analyzers
       end
 
       def report_result(result)
-        jot(CryptBuffer(result.flatten).chars.inspect,debug: false)
+        jot(result.chars.inspect,debug: true)
         jot("stripping padding!",debug: true)
-        jot(CryptBuffer(result.flatten).strip_padding.str,debug: false)
+        jot(result.strip_padding.str,debug: true)
       end
 
       def with_oracle_connection
@@ -83,15 +80,14 @@ module Analyzers
         # and store the result in a buffer we will mess with
         forge_buf = apply_found_bytes(blocks[block_index - 1],cur_result,pad_index)
         
-        1.upto 256 do |guess|
+        1.upto 255 do |guess|
           input = assemble_oracle_input(forge_buf,blocks,block_index,pad_index,guess)
           
           next if skip?(pad_index,block_index,guess,cur_result)
-
-          return guess if@oracle.valid_padding?(input,block_amount(block_index))
+          return guess if @oracle.valid_padding?(input,block_amount(block_index))
         end
 
-        raise FailedAnalysis, "No padding found... this should neve happen..."
+        raise FailedAnalysis, "No padding found... this should never happen..."
       end
       private
 

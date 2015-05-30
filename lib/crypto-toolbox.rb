@@ -8,6 +8,11 @@ require 'crypto-toolbox/utils/ecb_oracle.rb'
 require 'crypto-toolbox/oracles/user_profile_encryption_oracle.rb'
 require 'crypto-toolbox/oracles/cbc_mutating_encryption_oracle.rb'
 
+require 'crypto-toolbox/oracles/padding_oracle/tcp_oracle.rb'
+require 'crypto-toolbox/oracles/padding_oracle/http_oracle.rb'
+require 'crypto-toolbox/oracles/padding_oracle/memory_oracle.rb'
+
+
 
 
 require 'crypto-toolbox/crypt_buffer_input_converter.rb'

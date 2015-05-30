@@ -69,10 +69,24 @@ describe CryptBuffer do
       expect(CryptBuffer.from_hex("0xef").hex).to eq("EF")
     end
     
-    it "handles nil properly" do
-      expect(CryptBuffer.from_hex(nil).hex).to eq("")
+    it "raises an error on nil input" do
+      expect{
+        CryptBuffer.from_hex(nil).hex
+      }.to raise_error(CryptBufferInputConverter::InvalidHexstring)
     end
 
+    it "raises an error on none hex input" do
+      expect{
+        CryptBuffer.from_hex("my house").hex
+      }.to raise_error(CryptBufferInputConverter::InvalidHexstring)
+    end
+    
+    it "raises an error on empty input" do
+      expect{
+        CryptBuffer.from_hex("").hex
+      }.to raise_error(CryptBufferInputConverter::InvalidHexstring)
+    end
+    
     it "supports single char inputs" do
       expect(CryptBuffer.from_hex("f").hex).to eq("0F")
     end

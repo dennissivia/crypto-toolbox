@@ -37,8 +37,13 @@ module CryptBufferConcern
     end
     
     def strip_padding!
-      raise InvalidPkcs7Padding, "No valid pkcs#7 padding present" unless padding?
+      validate_padding! 
       strip_padding
+    end
+
+    def validate_padding!
+      raise InvalidPkcs7Padding, "No valid pkcs#7 padding present" unless padding?
+      true
     end
     
     def padding?

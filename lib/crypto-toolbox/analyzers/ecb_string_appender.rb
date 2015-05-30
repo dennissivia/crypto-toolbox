@@ -105,6 +105,7 @@ module Analyzers
       dict[result].tap do |match|
         jot(match,debug: true,raw: true) unless match.nil?
         if match.nil?
+	  binding.pry
           raise "Could not find dictonary entry for block #{block_id}, pos: #{pos}"
         end
       end
@@ -182,7 +183,7 @@ module Analyzers
         total_length = oracle.encipher(@prefix_pad + (DUMMY * i) ).length
         result       = total_length - (@prefix_blocks * block_size )
         if result > minimum_length
-          return minimum_length - (i-1)
+          return minimum_length - i
         end
       end
     end

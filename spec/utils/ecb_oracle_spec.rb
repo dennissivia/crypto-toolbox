@@ -5,6 +5,7 @@ RSpec.describe Utils::EcbOracle,wip: false do
   context "input encryption" do
     let(:plaintext)  { "1-2-3-4-5-6-7-8-9: Mary had a little lamb, His fleece was white as snow, And everywhere that Mary went, The lamb was sure to go."  }
     let(:subject)    { Utils::EcbOracle.new(prepend: true, append: true) }
+    
     it "encrypts the input (without any key given)" do
       expect{
         subject.encipher(plaintext)

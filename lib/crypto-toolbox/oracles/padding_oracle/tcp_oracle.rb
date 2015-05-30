@@ -1,15 +1,10 @@
-#!/usr/bin/env ruby
-
-require 'crypto-toolbox'
-
-module Analyzers
-  module PaddingOracle
-    module Oracles
+module CryptoToolbox
+  module Oracles
+    module PaddingOracle
 
       class TcpOracle
         def initialize
           require "socket"
-          require_relative "./tcp_oracle.rb"
 
           @hostname  = '54.165.60.84'
           @port      = 80

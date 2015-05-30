@@ -59,7 +59,7 @@ RSpec.describe Matasano::Solver do
     let(:plain) { "I'm back and I'm ringin' the bell" }
 
     it "solves the challange" do
-      expect(subject.solve7(input,key)).to include(plain)
+      expect(subject.solve7(input,key).str).to include(plain)
     end
   end
 

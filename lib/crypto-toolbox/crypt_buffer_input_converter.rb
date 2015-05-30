@@ -1,5 +1,8 @@
 
 class CryptBufferInputConverter
+  class ImpossibleConversion < RuntimeError; end
+  class InvalidHexstring < RuntimeError; end
+  
   def convert(input)
     bytes_from_any(input)
   end
@@ -8,6 +11,7 @@ class CryptBufferInputConverter
   # This is especially useful for unknown or uncertain inputs like
   # strings with or without leading 0x
   def from_hex(input)
+    raise InvalidHexstring, "input: #{input} is not a valid hexadicimal string" unless valid_hexstring?(input)
     hexstr =""
     unless input.nil?
       hexstr = normalize_hex(input)
@@ -62,7 +66,11 @@ class CryptBufferInputConverter
     tmp = pad_hex_char(str)
     tmp.gsub(/(^0x|\s)/,"").upcase
   end
-
+  private
+  
+  def valid_hexstring?(input)
+    input =~ /^(0x)?[a-fA-F0-9]+$/
+  end
 end
 
 def CryptBuffer(input)

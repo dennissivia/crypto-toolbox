@@ -1,5 +1,5 @@
 ## Uncomment to clear the screen before every task
-clearing :on
+#clearing :on
 
 guard :rspec, cmd: "bundle exec rspec -t ~cpu_burner" do
   require "guard/rspec/dsl"
