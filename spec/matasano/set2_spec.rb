@@ -99,7 +99,7 @@ RSpec.describe Matasano::Solver do
     it "raises an error on missing paddings" do
       expect{
         subject.solve15(unpadded)
-      }.to raise_error
+      }.to raise_error(CryptBufferConcern::Padding::InvalidPkcs7Padding)
     end
   end
 
