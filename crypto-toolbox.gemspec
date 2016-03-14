@@ -11,7 +11,7 @@ EOF
   s.files       = Dir.glob("lib/**/*.rb")
   s.homepage    = 'https://github.com/scepticulous/crypto-toolbox'
   s.license     = 'GPLv3'
-  s.required_ruby_version = '>= 2.0'
+  s.required_ruby_version = '>= 2.2'
 
   s.executables << "break-vigenere-xor"
   s.executables << "break-padding-oracle"
