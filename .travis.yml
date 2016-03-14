@@ -4,7 +4,7 @@ before_install:
   - sudo apt-get install -y aspell-en libaspell15 libaspell-dev aspell
 language: ruby
 rvm:
-  - 2.2.0
+  - 2.3.0
 addons:
   code_climate:
     repo_token: 891f2b22f36f5d18a68d846c5ea45276885d0d1442a681d36db435a8a97a15b3
