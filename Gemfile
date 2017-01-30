@@ -23,7 +23,8 @@ group :test do
   gem 'guard'
   gem 'rspec'
   gem 'guard-rspec'
-  gem "codeclimate-test-reporter", require: nil
+  gem "simplecov"
+  gem "codeclimate-test-reporter", "~> 1.0.0"
 end
 
 gemspec
