@@ -1,4 +1,5 @@
 require 'base64'
+require 'securerandom'
 
 require 'crypto-toolbox/utils/reporting/console.rb'
 require 'crypto-toolbox/utils/hamming_distance_filter.rb'
