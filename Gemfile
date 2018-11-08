@@ -2,14 +2,9 @@ source 'https://rubygems.org'
 
 group :development,:test do
   gem 'version'
-
-  gem 'pry'
   gem 'byebug'
-  gem 'pry-byebug'
-  gem 'pry-plus-byebug'
-
+  gem 'pry'
   gem 'flog'
-
   gem 'benchmark-ips'
   gem 'ruby-prof'
   gem 'stackprof'
