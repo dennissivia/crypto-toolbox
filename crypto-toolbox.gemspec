@@ -18,7 +18,7 @@ EOF
   s.executables << "break-cbc-mac-variable-length"
   s.executables << "break-ecb-string-appender"
 
-  s.add_dependency 'aes', '~> 0.5'
-  s.add_dependency 'ffi-hunspell', '~> 0.3'
+  s.add_dependency 'aes', '~> 0.5.0'
+  s.add_dependency 'ffi-hunspell', '~> 0.4.0'
 end
 
