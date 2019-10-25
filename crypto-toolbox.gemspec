@@ -19,6 +19,6 @@ EOF
   s.executables << "break-ecb-string-appender"
 
   s.add_dependency 'aes', '~> 0.5.0'
-  s.add_dependency 'ffi-hunspell', '~> 0.4.0'
+  s.add_dependency 'ffi-hunspell', '>= 0.4', '< 0.6'
 end
 
