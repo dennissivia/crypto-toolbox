@@ -1,4 +1,6 @@
 # coding: utf-8
+require_relative './aes_monkeypatch.rb'
+
 module Ciphers
   class Aes
 
@@ -17,11 +19,11 @@ module Ciphers
     def encipher_ecb(key,input)
       encipher_ecb_blockwise(CryptBuffer(key),pad_message(input).chunks_of(@block_size_bytes))
     end
-    
+
     def encipher_cbc(key_str,input_str,iv: nil)
       unicipher_cbc(:encipher,key_str,pad_message(input_str),iv)
     end
-    
+
     def decipher_cbc(key_str,input_str,iv: nil,strip_padding: true)
       plain = unicipher_cbc(:decipher,key_str,CryptBuffer(input_str),iv).to_crypt_buffer
       strip_padding ? plain.strip_padding : plain
@@ -40,13 +42,13 @@ module Ciphers
         buffer
       end
     end
-    
+
     def pad_block(block)
       return block
     end
-    
+
     def encipher_ecb_blockwise(key,blocks)
-      blocks.map{|block| encipher_ecb_block(key,block)  }.join 
+      blocks.map{|block| encipher_ecb_block(key,block)  }.join
     end
 
     def encipher_ecb_block(key,block)
@@ -55,14 +57,14 @@ module Ciphers
     end
 
     def decipher_ecb_blockwise(key,blocks)
-      blocks.map{|block| decipher_ecb_block(key,block)  }.join 
+      blocks.map{|block| decipher_ecb_block(key,block)  }.join
     end
 
     def decipher_ecb_block(key,block)
       need_padding = (block.length < @block_size_bytes)
       AES.decrypt(["",block.str], key.hex, {:format => :plain,:padding => need_padding,:cipher => "AES-#{@key_size}-ECB"})
     end
-    
+
     # this method is used for encipher and decipher since most of the code is identical
     # only the value of the previous block and the internal ecb method differs
     def unicipher_cbc(direction,key_str,input_buf,iv)
@@ -71,7 +73,7 @@ module Ciphers
       blocks = input_buf.chunks_of(@block_size_bytes)
       iv   ||= blocks.shift.str
       key    = CryptBuffer(key_str).hex
-      
+
       prev_block=iv.to_crypt_buffer
 
       strings = blocks.map.with_index do |block,i|
@@ -87,22 +89,23 @@ module Ciphers
 
       CryptBuffer(strings.join)
     end
-    
+
     def encipher_cbc_block(key,block,prev_block)
       xored =  block ^ prev_block
 
-      _,out = AES.encrypt(xored.str, key, {:format => :plain,:padding => false,:cipher => "AES-#{@key_size}-ECB",:iv => prev_block.str })
+      _,out = AES.encrypt(xored.str, key, {:format => :plain,:padding => false,:cipher => "AES-#{@key_size}-ECB"})
       ecb_block = CryptBuffer(out)
     end
-    
-    def decipher_cbc_block(key,block,prev_block)
 
-      out = ::AES.decrypt([prev_block.str,block.str] , key, {:format => :plain,:padding => false,:cipher => "AES-#{@key_size}-ECB",:iv => prev_block.str })
+    def decipher_cbc_block(key,block,prev_block)
+      # decrypt requires an IV as the first argument. Even though ECB does not have an IV in the first place...
+      # Thus we use an empty string (0 bytes) as required by OpenSSL
+      out = ::AES.decrypt(["",block.str] , key, {:format => :plain,:padding => false,:cipher => "AES-#{@key_size}-ECB"})
       ecb_block = CryptBuffer(out)
 
       xored = ecb_block ^ prev_block
     end
-    
+
   end
 end
 
