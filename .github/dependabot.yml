@@ -1,0 +1,37 @@
+version: 2
+updates:
+- package-ecosystem: bundler
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: benchmark-ips
+    versions:
+    - 2.8.4
+  - dependency-name: rake
+    versions:
+    - 13.0.3
+  - dependency-name: rspec
+    versions:
+    - 3.10.0
+  - dependency-name: ffi-hunspell
+    versions:
+    - 0.6.0
+    - 0.6.1
+  - dependency-name: guard
+    versions:
+    - 2.16.2
+  - dependency-name: json
+    versions:
+    - 2.5.1
+  - dependency-name: stackprof
+    versions:
+    - 0.2.16
+  - dependency-name: aes
+    versions:
+    - 0.5.1
+  - dependency-name: pry
+    versions:
+    - 0.13.1
